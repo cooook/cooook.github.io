@@ -276,7 +276,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-10-10 09:49:07" itemprop="dateModified" datetime="2019-10-10T09:49:07+08:00">2019-10-10</time>
+                <time title="修改时间：2019-10-10 13:36:59" itemprop="dateModified" datetime="2019-10-10T13:36:59+08:00">2019-10-10</time>
               </span>
             
           
@@ -307,8 +307,14 @@
       
           <p>跟着wood学了一下栈溢出.<br>思路大概就是用输入时候的漏洞覆盖其他的数值.<br>下面就从入门到入坟梳理一下栈溢出漏洞.  </p>
 <h1 id="0x0-栈中变量的存储方式"><a href="#0x0-栈中变量的存储方式" class="headerlink" title="0x0 栈中变量的存储方式"></a>0x0 栈中变量的存储方式</h1><p>栈中变量的存储符合先进后出<br><img src="https://i.loli.net/2019/10/10/ipwuM5gc6QoOJ2e.png" alt="Data_stack.png"><br>函数中申请局部变量是在栈内存的.<br>栈中地址由高地址向地地址生长, 即栈顶是低地址, 栈底是高地址.  </p>
-<h3 id="两个特殊变量-ebp-esp"><a href="#两个特殊变量-ebp-esp" class="headerlink" title="两个特殊变量 ebp esp"></a>两个特殊变量 ebp esp</h3><p>ebp指向栈底, esp指向栈顶, (ebp esp 在栈内存中是占用内存的, 因为是地址变量, 32位系统4字节, 64位系统8字节)  </p>
-<h1 id="0x1-程序的运行-eip指针"><a href="#0x1-程序的运行-eip指针" class="headerlink" title="0x1 程序的运行 eip指针"></a>0x1 程序的运行 eip指针</h1><p>程序的汇编中, 代码段和数据段分开储存, 代码段和数据段各有栈储存.<br>在代码栈中, 当运行到第i行时, eip指向第i+1行, eip的跳转可以实现函数的多种功能.  </p>
+<h2 id="数组的存储方式"><a href="#数组的存储方式" class="headerlink" title="数组的存储方式"></a>数组的存储方式</h2><p>数组的存储</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int a[10];</span><br></pre></td></tr></table></figure>
+
+<p>定义一个大小为10的int数组a, 那么a的值是数组的首地址, a[i] = *(a + i)</p>
+<h2 id="两个特殊变量-ebp-esp"><a href="#两个特殊变量-ebp-esp" class="headerlink" title="两个特殊变量 ebp esp"></a>两个特殊变量 ebp esp</h2><p>ebp指向栈底, esp指向栈顶, (ebp esp 在栈内存中是不占用内存的, ebp, esp寄存器用的不是栈内存)  </p>
+<h1 id="0x1-程序的运行-eip指针"><a href="#0x1-程序的运行-eip指针" class="headerlink" title="0x1 程序的运行 eip指针"></a>0x1 程序的运行 eip指针</h1><p>程序的汇编中, 代码段和数据段分开储存, 数据段有栈储存, 代码段没有<br>在代码栈中, 当运行到第i行时, eip指向第i+1行, eip的跳转可以实现函数的多种功能.  </p>
+<h1 id="0x2-基础栈溢出"><a href="#0x2-基础栈溢出" class="headerlink" title="0x2 基础栈溢出"></a>0x2 基础栈溢出</h1><p>来自ctf-wiki的一些内容<br><img src="https://i.loli.net/2019/10/10/o1VJGrqvKL3CUbt.png" alt><br>大概就是说, 在读入的时候, 对读入的数据的多少没有限制或者限制不够, 导致读入的数据覆盖到栈中的其他内存, 这样就能达到一些目的.  </p>
+<h2 id="劫持函数返回地址"><a href="#劫持函数返回地址" class="headerlink" title="劫持函数返回地址"></a>劫持函数返回地址</h2><p><img src="https://i.loli.net/2019/10/10/fhb3yCsiXLQI26S.png" alt="v2-9125ba203edd2bab1308ad88db2ae197_hd.png">  </p>
 
         
       
