@@ -55,13 +55,13 @@
   };
 </script>
 
-  <meta name="description" content="跟着wood学了一下栈溢出.思路大概就是用输入时候的漏洞覆盖其他的数值.下面就从入门到入坟梳理一下栈溢出漏洞.   0x0 栈中变量的存储方式栈中变量的存储符合先进后出函数中申请局部变量是在栈内存的.栈中地址由高地址向低地址生长, 即栈顶是低地址, 栈底是高地址.   数组的存储方式数组的存储 1int a[10];  定义一个内存大小为10*sizeof(int)的int数组a, 那么a的值是数">
+  <meta name="description" content="跟着wood学了一下栈溢出.思路大概就是用输入时候的漏洞覆盖其他的数值.下面就从入门到入坟梳理一下栈溢出漏洞.">
 <meta name="keywords" content="栈溢出">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Stack-overflow 小记">
 <meta property="og:url" content="http://cooook.github.io/2019/09/28/stack-overflow/index.html">
 <meta property="og:site_name" content="Cooook&#39;s Blog">
-<meta property="og:description" content="跟着wood学了一下栈溢出.思路大概就是用输入时候的漏洞覆盖其他的数值.下面就从入门到入坟梳理一下栈溢出漏洞.   0x0 栈中变量的存储方式栈中变量的存储符合先进后出函数中申请局部变量是在栈内存的.栈中地址由高地址向低地址生长, 即栈顶是低地址, 栈底是高地址.   数组的存储方式数组的存储 1int a[10];  定义一个内存大小为10*sizeof(int)的int数组a, 那么a的值是数">
+<meta property="og:description" content="跟着wood学了一下栈溢出.思路大概就是用输入时候的漏洞覆盖其他的数值.下面就从入门到入坟梳理一下栈溢出漏洞.">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://i.loli.net/2019/10/10/ipwuM5gc6QoOJ2e.png">
 <meta property="og:image" content="https://i.loli.net/2019/10/10/o1VJGrqvKL3CUbt.png">
@@ -73,10 +73,10 @@
 <meta property="og:image" content="https://i.loli.net/2019/10/10/uiegoSmf3QwZGOr.png">
 <meta property="og:image" content="https://i.loli.net/2019/10/10/8NRpMorF26tjEJb.png">
 <meta property="og:image" content="https://i.loli.net/2019/10/10/SJsgc85pGAQFzko.png">
-<meta property="og:updated_time" content="2019-10-19T12:00:58.538Z">
+<meta property="og:updated_time" content="2019-10-25T12:25:35.041Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Stack-overflow 小记">
-<meta name="twitter:description" content="跟着wood学了一下栈溢出.思路大概就是用输入时候的漏洞覆盖其他的数值.下面就从入门到入坟梳理一下栈溢出漏洞.   0x0 栈中变量的存储方式栈中变量的存储符合先进后出函数中申请局部变量是在栈内存的.栈中地址由高地址向低地址生长, 即栈顶是低地址, 栈底是高地址.   数组的存储方式数组的存储 1int a[10];  定义一个内存大小为10*sizeof(int)的int数组a, 那么a的值是数">
+<meta name="twitter:description" content="跟着wood学了一下栈溢出.思路大概就是用输入时候的漏洞覆盖其他的数值.下面就从入门到入坟梳理一下栈溢出漏洞.">
 <meta name="twitter:image" content="https://i.loli.net/2019/10/10/ipwuM5gc6QoOJ2e.png">
   <link rel="canonical" href="http://cooook.github.io/2019/09/28/stack-overflow/">
 
@@ -292,7 +292,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-10-19 20:00:58" itemprop="dateModified" datetime="2019-10-19T20:00:58+08:00">2019-10-19</time>
+                <time title="修改时间：2019-10-25 20:25:35" itemprop="dateModified" datetime="2019-10-25T20:25:35+08:00">2019-10-25</time>
               </span>
             
           
@@ -322,6 +322,7 @@
 
       
         <p>跟着wood学了一下栈溢出.<br>思路大概就是用输入时候的漏洞覆盖其他的数值.<br>下面就从入门到入坟梳理一下栈溢出漏洞.  </p>
+<a id="more"></a>
 <h1 id="0x0-栈中变量的存储方式"><a href="#0x0-栈中变量的存储方式" class="headerlink" title="0x0 栈中变量的存储方式"></a>0x0 栈中变量的存储方式</h1><p>栈中变量的存储符合先进后出<br><img src="https://i.loli.net/2019/10/10/ipwuM5gc6QoOJ2e.png" alt="Data_stack.png"><br>函数中申请局部变量是在栈内存的.<br>栈中地址由高地址向低地址生长, 即栈顶是低地址, 栈底是高地址.  </p>
 <h2 id="数组的存储方式"><a href="#数组的存储方式" class="headerlink" title="数组的存储方式"></a>数组的存储方式</h2><p>数组的存储</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a[<span class="number">10</span>];</span><br></pre></td></tr></table></figure>

