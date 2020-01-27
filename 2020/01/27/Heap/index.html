@@ -59,7 +59,7 @@
 <meta name="keywords" content="堆">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Heap">
-<meta property="og:url" content="http://cooook.github.io/2020/01/23/Heap/index.html">
+<meta property="og:url" content="http://cooook.github.io/2020/01/27/Heap/index.html">
 <meta property="og:site_name" content="Cooook&#39;s Blog">
 <meta property="og:description" content="glibc堆内存分配原理.留坑待填 Use After Freeuaf漏洞主要原因是释放了一个堆块后, 并没有将该指针置为NULL, 再次malloc的时候可能会重新申请到这块内存, 如果被恶意构造数据就会被利用.UAF源码,  输出可以看到c的地址和a的地址一样, 现在a的指针指向了”this is C!”   一段小代码 #include &amp;lt;stdio.h&amp;gt; #include &amp;l">
 <meta property="og:locale" content="zh-CN">
@@ -69,12 +69,12 @@
 <meta property="og:image" content="https://i.loli.net/2020/01/27/RXnAFVOgw63lrcs.png">
 <meta property="og:image" content="https://p0.ssl.qhimg.com/t01ccb7d68ba4ee0888.png">
 <meta property="og:image" content="https://p4.ssl.qhimg.com/t01d4484ff4a16c0287.png">
-<meta property="og:updated_time" content="2020-01-27T03:46:26.435Z">
+<meta property="og:updated_time" content="2020-01-27T03:48:05.725Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Heap">
 <meta name="twitter:description" content="glibc堆内存分配原理.留坑待填 Use After Freeuaf漏洞主要原因是释放了一个堆块后, 并没有将该指针置为NULL, 再次malloc的时候可能会重新申请到这块内存, 如果被恶意构造数据就会被利用.UAF源码,  输出可以看到c的地址和a的地址一样, 现在a的指针指向了”this is C!”   一段小代码 #include &amp;lt;stdio.h&amp;gt; #include &amp;l">
 <meta name="twitter:image" content="https://p3.ssl.qhimg.com/t01c7befb0f2d9d7928.png">
-  <link rel="canonical" href="http://cooook.github.io/2020/01/23/Heap/">
+  <link rel="canonical" href="http://cooook.github.io/2020/01/27/Heap/">
 
 
 <script id="page-configurations">
@@ -249,7 +249,7 @@
   
   
   <div class="post-block post">
-    <link itemprop="mainEntityOfPage" href="http://cooook.github.io/2020/01/23/Heap/">
+    <link itemprop="mainEntityOfPage" href="http://cooook.github.io/2020/01/27/Heap/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Cooook">
@@ -277,19 +277,11 @@
                 
               
 
-              <time title="创建时间：2020-01-23 15:48:43" itemprop="dateCreated datePublished" datetime="2020-01-23T15:48:43+08:00">2020-01-23</time>
+              <time title="创建时间：2020-01-27 15:48:43 / 修改时间：11:48:05" itemprop="dateCreated datePublished" datetime="2020-01-27T15:48:43+08:00">2020-01-27</time>
             </span>
           
             
 
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-27 11:46:26" itemprop="dateModified" datetime="2020-01-27T11:46:26+08:00">2020-01-27</time>
-              </span>
             
           
             <span class="post-meta-item">
@@ -383,8 +375,8 @@
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
-                <a href="/2020/01/21/dubblesort/" rel="next" title="pwnable.tw dubblesort">
-                  <i class="fa fa-chevron-left"></i> pwnable.tw dubblesort
+                <a href="/2020/01/23/Silver-bullet/" rel="next" title="Silver-bullet">
+                  <i class="fa fa-chevron-left"></i> Silver-bullet
                 </a>
               
             </div>
@@ -392,10 +384,6 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-              
-                <a href="/2020/01/23/Silver-bullet/" rel="prev" title="Silver-bullet">
-                  Silver-bullet <i class="fa fa-chevron-right"></i>
-                </a>
               
             </div>
           </div>
