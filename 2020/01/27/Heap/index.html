@@ -55,13 +55,13 @@
   };
 </script>
 
-  <meta name="description" content="glibc堆内存分配原理.留坑待填 Use After Freeuaf漏洞主要原因是释放了一个堆块后, 并没有将该指针置为NULL, 再次malloc的时候可能会重新申请到这块内存, 如果被恶意构造数据就会被利用.UAF源码,  输出可以看到c的地址和a的地址一样, 现在a的指针指向了”this is C!”   一段小代码 #include &amp;lt;stdio.h&amp;gt; #include &amp;l">
+  <meta name="description" content="堆学习笔记">
 <meta name="keywords" content="堆">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Heap">
 <meta property="og:url" content="http://cooook.github.io/2020/01/27/Heap/index.html">
 <meta property="og:site_name" content="Cooook&#39;s Blog">
-<meta property="og:description" content="glibc堆内存分配原理.留坑待填 Use After Freeuaf漏洞主要原因是释放了一个堆块后, 并没有将该指针置为NULL, 再次malloc的时候可能会重新申请到这块内存, 如果被恶意构造数据就会被利用.UAF源码,  输出可以看到c的地址和a的地址一样, 现在a的指针指向了”this is C!”   一段小代码 #include &amp;lt;stdio.h&amp;gt; #include &amp;l">
+<meta property="og:description" content="堆学习笔记">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://p3.ssl.qhimg.com/t01c7befb0f2d9d7928.png">
 <meta property="og:image" content="https://p4.ssl.qhimg.com/t01310bfbfd1e2a7681.png">
@@ -69,10 +69,10 @@
 <meta property="og:image" content="https://i.loli.net/2020/01/27/RXnAFVOgw63lrcs.png">
 <meta property="og:image" content="https://p0.ssl.qhimg.com/t01ccb7d68ba4ee0888.png">
 <meta property="og:image" content="https://p4.ssl.qhimg.com/t01d4484ff4a16c0287.png">
-<meta property="og:updated_time" content="2020-01-27T03:48:05.725Z">
+<meta property="og:updated_time" content="2020-01-27T03:48:42.803Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Heap">
-<meta name="twitter:description" content="glibc堆内存分配原理.留坑待填 Use After Freeuaf漏洞主要原因是释放了一个堆块后, 并没有将该指针置为NULL, 再次malloc的时候可能会重新申请到这块内存, 如果被恶意构造数据就会被利用.UAF源码,  输出可以看到c的地址和a的地址一样, 现在a的指针指向了”this is C!”   一段小代码 #include &amp;lt;stdio.h&amp;gt; #include &amp;l">
+<meta name="twitter:description" content="堆学习笔记">
 <meta name="twitter:image" content="https://p3.ssl.qhimg.com/t01c7befb0f2d9d7928.png">
   <link rel="canonical" href="http://cooook.github.io/2020/01/27/Heap/">
 
@@ -277,7 +277,7 @@
                 
               
 
-              <time title="创建时间：2020-01-27 15:48:43 / 修改时间：11:48:05" itemprop="dateCreated datePublished" datetime="2020-01-27T15:48:43+08:00">2020-01-27</time>
+              <time title="创建时间：2020-01-27 15:48:43 / 修改时间：11:48:42" itemprop="dateCreated datePublished" datetime="2020-01-27T15:48:43+08:00">2020-01-27</time>
             </span>
           
             
@@ -309,7 +309,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="glibc堆内存分配原理"><a href="#glibc堆内存分配原理" class="headerlink" title="glibc堆内存分配原理."></a>glibc堆内存分配原理.</h1><p>留坑待填</p>
+        <p>堆学习笔记</p>
+<a id="more"></a>
+<h1 id="glibc堆内存分配原理"><a href="#glibc堆内存分配原理" class="headerlink" title="glibc堆内存分配原理."></a>glibc堆内存分配原理.</h1><p>留坑待填</p>
 <h1 id="Use-After-Free"><a href="#Use-After-Free" class="headerlink" title="Use After Free"></a>Use After Free</h1><p>uaf漏洞主要原因是释放了一个堆块后, 并没有将该指针置为NULL, 再次malloc的时候可能会重新申请到这块内存, 如果被恶意构造数据就会被利用.<br>UAF源码, </p>
 <p><img src="https://p3.ssl.qhimg.com/t01c7befb0f2d9d7928.png" alt><br>输出<br><img src="https://p4.ssl.qhimg.com/t01310bfbfd1e2a7681.png" alt><br>可以看到c的地址和a的地址一样, 现在a的指针指向了”this is C!”  </p>
 <p>一段小代码</p>
