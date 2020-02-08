@@ -55,18 +55,18 @@
   };
 </script>
 
-  <meta name="description" content="0x0 前置技能unsortedbin里面的chunk的fd和bk的值和libc有关.大于0x80的chunk被free后会被回收到unsortedbin中, 需要注意的是, 需要malloc(0x90), malloc(0x10), 然后再free 0x90, 否则的话, 大小为0x90的chunk会被直接回收到Top chunk中.   0x1 源代码分析支持add, dele, show三个">
+  <meta name="description" content="0x0 前置技能unsortedbin里面的chunk的fd和bk的值和libc有关.大于0x80的chunk被free后会被回收到unsortedbin中, 需要注意的是, 需要malloc(0x90), malloc(0x10), 然后再free 0x90, 否则的话, 大小为0x90的chunk会被直接回收到Top chunk中.   0x1 源代码分析支持add, dele, show">
 <meta name="keywords" content="UAF,double free">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Roc826">
 <meta property="og:url" content="http://cooook.github.io/2020/02/08/Roc826/index.html">
 <meta property="og:site_name" content="Cooook&#39;s Blog">
-<meta property="og:description" content="0x0 前置技能unsortedbin里面的chunk的fd和bk的值和libc有关.大于0x80的chunk被free后会被回收到unsortedbin中, 需要注意的是, 需要malloc(0x90), malloc(0x10), 然后再free 0x90, 否则的话, 大小为0x90的chunk会被直接回收到Top chunk中.   0x1 源代码分析支持add, dele, show三个">
+<meta property="og:description" content="0x0 前置技能unsortedbin里面的chunk的fd和bk的值和libc有关.大于0x80的chunk被free后会被回收到unsortedbin中, 需要注意的是, 需要malloc(0x90), malloc(0x10), 然后再free 0x90, 否则的话, 大小为0x90的chunk会被直接回收到Top chunk中.   0x1 源代码分析支持add, dele, show">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-02-08T13:59:57.578Z">
+<meta property="og:updated_time" content="2020-02-08T14:02:09.607Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Roc826">
-<meta name="twitter:description" content="0x0 前置技能unsortedbin里面的chunk的fd和bk的值和libc有关.大于0x80的chunk被free后会被回收到unsortedbin中, 需要注意的是, 需要malloc(0x90), malloc(0x10), 然后再free 0x90, 否则的话, 大小为0x90的chunk会被直接回收到Top chunk中.   0x1 源代码分析支持add, dele, show三个">
+<meta name="twitter:description" content="0x0 前置技能unsortedbin里面的chunk的fd和bk的值和libc有关.大于0x80的chunk被free后会被回收到unsortedbin中, 需要注意的是, 需要malloc(0x90), malloc(0x10), 然后再free 0x90, 否则的话, 大小为0x90的chunk会被直接回收到Top chunk中.   0x1 源代码分析支持add, dele, show">
   <link rel="canonical" href="http://cooook.github.io/2020/02/08/Roc826/">
 
 
@@ -270,7 +270,7 @@
                 
               
 
-              <time title="创建时间：2020-02-08 18:27:58 / 修改时间：21:59:57" itemprop="dateCreated datePublished" datetime="2020-02-08T18:27:58+08:00">2020-02-08</time>
+              <time title="创建时间：2020-02-08 18:27:58 / 修改时间：22:02:09" itemprop="dateCreated datePublished" datetime="2020-02-08T18:27:58+08:00">2020-02-08</time>
             </span>
           
             
@@ -302,7 +302,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="0x0-前置技能"><a href="#0x0-前置技能" class="headerlink" title="0x0 前置技能"></a>0x0 前置技能</h1><p>unsortedbin里面的chunk的fd和bk的值和libc有关.<br>大于0x80的chunk被free后会被回收到unsortedbin中, 需要注意的是, 需要malloc(0x90), malloc(0x10), 然后再free 0x90, 否则的话, 大小为0x90的chunk会被直接回收到Top chunk中.  </p>
+        <a id="more"></a> 
+<h1 id="0x0-前置技能"><a href="#0x0-前置技能" class="headerlink" title="0x0 前置技能"></a>0x0 前置技能</h1><p>unsortedbin里面的chunk的fd和bk的值和libc有关.<br>大于0x80的chunk被free后会被回收到unsortedbin中, 需要注意的是, 需要malloc(0x90), malloc(0x10), 然后再free 0x90, 否则的话, 大小为0x90的chunk会被直接回收到Top chunk中.  </p>
 <h1 id="0x1-源代码分析"><a href="#0x1-源代码分析" class="headerlink" title="0x1 源代码分析"></a>0x1 源代码分析</h1><p>支持add, dele, show三个功能.<br>add功能函数.  </p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">__<span class="function">int64 <span class="title">add</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">signed</span> <span class="keyword">int</span> i; <span class="comment">// [rsp+8h] [rbp-8h]</span></span><br><span class="line">  <span class="keyword">signed</span> <span class="keyword">int</span> v2; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; ; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( i &gt; <span class="number">19</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">"full!"</span>);</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0L</span>L;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ( !<span class="built_in">list</span>[i] )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"size?"</span>);</span><br><span class="line">  v2 = readi();</span><br><span class="line">  <span class="keyword">if</span> ( v2 &lt; <span class="number">0</span> || v2 &gt; <span class="number">144</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Invalid size!"</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">list</span>[i] = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(v2);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"content:"</span>);</span><br><span class="line">  read_n((__int64)<span class="built_in">list</span>[i], v2);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"done!"</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0L</span>L;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
