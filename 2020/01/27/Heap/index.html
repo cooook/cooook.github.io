@@ -69,7 +69,8 @@
 <meta property="og:image" content="https://i.loli.net/2020/01/27/RXnAFVOgw63lrcs.png">
 <meta property="og:image" content="https://p0.ssl.qhimg.com/t01ccb7d68ba4ee0888.png">
 <meta property="og:image" content="https://p4.ssl.qhimg.com/t01d4484ff4a16c0287.png">
-<meta property="og:updated_time" content="2020-01-27T03:48:42.803Z">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01db644af1ec2f2297.png">
+<meta property="og:updated_time" content="2020-02-04T05:45:46.286Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Heap">
 <meta name="twitter:description" content="堆学习笔记">
@@ -277,11 +278,19 @@
                 
               
 
-              <time title="创建时间：2020-01-27 15:48:43 / 修改时间：11:48:42" itemprop="dateCreated datePublished" datetime="2020-01-27T15:48:43+08:00">2020-01-27</time>
+              <time title="创建时间：2020-01-27 15:48:43" itemprop="dateCreated datePublished" datetime="2020-01-27T15:48:43+08:00">2020-01-27</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-04 13:45:46" itemprop="dateModified" datetime="2020-02-04T13:45:46+08:00">2020-02-04</time>
+              </span>
             
           
             <span class="post-meta-item">
@@ -352,6 +361,9 @@
 <span class="keyword">char</span> *d = <span class="built_in">malloc</span>(<span class="number">8</span>);
 <span class="keyword">char</span> *e = <span class="built_in">malloc</span>(<span class="number">8</span>);</code></pre>
 <p>这时, a这块内存被free了两次.<br>且d == a.<br>chunk在free时和分配给用户时不同的格式.<br><img src="https://i.loli.net/2020/01/27/2fGpFrPk4juWvhe.png" alt="QQ截图20200127095800.png"><br>这为分配给用户之后的chunk, P代表前一个是否被使用, P = 0表示前一个空闲, 这时prev_size才有效, 可以用prev_size找到前一个chunk的开始地址.<br>M代表当前chunk从那个内存区域获得的虚拟内存, M=1表示从mmap映射区域, 否则从heap区域分配.<br>A代表是不是非主分配区, A=1贼属于非主分配区.<br><img src="https://i.loli.net/2020/01/27/RXnAFVOgw63lrcs.png" alt="QQ截图20200127095818.png"><br>这是free chunk的结构, fd是下一个chunk, bk是上一个chunk.<br><img src="https://p0.ssl.qhimg.com/t01ccb7d68ba4ee0888.png" alt><br><img src="https://p4.ssl.qhimg.com/t01d4484ff4a16c0287.png" alt><br>那么上面这个例子, 修改d的时候, 相当于修改了fd, * d = (char *)(&amp;stack - sizeof(d))<br>相当于把stack这个变量放到了size of chunk 这个位置, 减size of d 的原因是要把size of prev chunk 这个位置空出来, 0x20 是size of chunk的值, 这样我们下一次malloc的时候, 可以得到&amp;stack + 8.  </p>
+<h1 id="Unlink漏洞"><a href="#Unlink漏洞" class="headerlink" title="Unlink漏洞"></a>Unlink漏洞</h1><p><img src="https://p1.ssl.qhimg.com/t01db644af1ec2f2297.png" alt><br>这个技术可以被用于当你在一个已知区域内(比如bss段)有一个指针,并且在这个区域内可以调用unlink的时候.<br>最常见的情况就是存在一个可以溢出的带有全局指针的缓冲区.<br>这个练习的关键在于利用free()来改写全局指针chunk0_ptr以达到任意地址写入的目的.<br>我们在chunk0这个全局变量里面伪造一个fake chunk.<br>先设置一个fd指针,使得chunk-&gt;fd-&gt;bk == chunk<br>再设置一个bk指针,使得chunk-&gt;bk-&gt;fd == chunk<br>chunk0_ptr[2]为fake chunk的fd, chunk0_ptr[3]为fake chunk的bk.<br>fake chunk -&gt; fd -&gt; bk = &amp;chunk0_ptr - 0x18 + 0x8 * 3 = &amp;chunk.<br>这点是这样.<br>我们还需要确保,fake chunk的size字段和下一个堆块的presize字段(fd-&gt;presize)的值是一样的.<br>经过了这个设置,就可以过掉“(chunksize(P) != prev_size (next_chunk(P)) == False”的校验了.<br>我们假设我们在chunk0处有一个溢出,让我们去修改chunk1的头部的信息.<br>我们缩小chunk1的presize(表示的是chunk0的size),好让free认为chunk0是从我们伪造的堆块开始的.<br>这里比较关键的是已知的指针正确地指向fake chunk的开头,以及我们相应地缩小了chunk.<br>如果我们正常地free掉了chunk0的话,chunk1的presize应该是0x90,但是这里被我们修改为了0x80.<br>我们通过设置“previous_in_use”的值为False,将chunk0标记为了free(尽管它并没有被free)<br>现在我们free掉chunk1,好让consolidate backward去unlink我们的fake chunk,然后修改chunk_ptr.  </p>
+<h2 id="修改的步骤"><a href="#修改的步骤" class="headerlink" title="修改的步骤."></a>修改的步骤.</h2><p>1.修改fd, bk<br>2.修改prev_size<br>3.修改prev_in_use</p>
+<h2 id="利用"><a href="#利用" class="headerlink" title="利用."></a>利用.</h2><p>free掉chunk1后, chunk1和fake chunk会合并, 调用unlink, 这时候fake chunk -&gt; fd -&gt; bk = fake chunk -&gt; fd<br>即chunk0_ptr = &amp;chunk0_ptr - 0x18<br>则chunk0_ptr[3] = addr, chunk0_ptr[3] = chunk0_ptr + 3* 0x8 = &amp;chunk0_ptr,  修改chunk0_ptr的值就可以修改addr内存的值.  </p>
 
     </div>
 
@@ -438,7 +450,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#glibc堆内存分配原理"><span class="nav-number">1.</span> <span class="nav-text">glibc堆内存分配原理.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Use-After-Free"><span class="nav-number">2.</span> <span class="nav-text">Use After Free</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Double-Free-漏洞"><span class="nav-number">3.</span> <span class="nav-text">Double Free 漏洞</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#glibc堆内存分配原理"><span class="nav-number">1.</span> <span class="nav-text">glibc堆内存分配原理.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Use-After-Free"><span class="nav-number">2.</span> <span class="nav-text">Use After Free</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Double-Free-漏洞"><span class="nav-number">3.</span> <span class="nav-text">Double Free 漏洞</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Unlink漏洞"><span class="nav-number">4.</span> <span class="nav-text">Unlink漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#修改的步骤"><span class="nav-number">4.1.</span> <span class="nav-text">修改的步骤.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#利用"><span class="nav-number">4.2.</span> <span class="nav-text">利用.</span></a></li></ol></li></ol></div>
         
       </div>
       <!--/noindex-->
@@ -456,7 +468,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -482,7 +494,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
