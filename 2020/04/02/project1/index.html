@@ -67,7 +67,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/03/31/te1FhdxJuzEqfOB.png">
 <meta property="og:image" content="https://i.loli.net/2020/03/31/CivxAZmyX31VcHB.png">
 <meta property="og:image" content="https://i.loli.net/2020/03/31/VgdcltTCAU62uai.png">
-<meta property="og:updated_time" content="2020-04-02T12:39:00.221Z">
+<meta property="og:updated_time" content="2020-04-02T12:57:46.475Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="数据结构project1">
 <meta name="twitter:description" content="datastructure project1">
@@ -275,7 +275,7 @@
                 
               
 
-              <time title="创建时间：2020-04-02 16:45:34 / 修改时间：20:39:00" itemprop="dateCreated datePublished" datetime="2020-04-02T16:45:34+08:00">2020-04-02</time>
+              <time title="创建时间：2020-04-02 16:45:34 / 修改时间：20:57:46" itemprop="dateCreated datePublished" datetime="2020-04-02T16:45:34+08:00">2020-04-02</time>
             </span>
           
             
@@ -321,7 +321,7 @@
 </ul>
 <p><strong>Algorithm1</strong><br>&emsp;It’s the simplest solution, we just need to enumerate every submatrix and calculate the sum of every submatrix.<br><strong>Fuction Solver</strong><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ix in <span class="number">1.</span>..n</span><br><span class="line">    <span class="keyword">for</span> jx in <span class="number">1.</span>..ix</span><br><span class="line">        <span class="keyword">for</span> iy in <span class="number">1.</span>..n</span><br><span class="line">            <span class="keyword">for</span> jy in <span class="number">1.</span>..iy</span><br><span class="line">                if Sum(jx, jy, ix, iy) &gt; Ans</span><br><span class="line">                    Ans = Sum(jx, jy, ix, iy);</span><br></pre></td></tr></table></figure></p>
 <p><strong>Fuction Sum</strong><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i in jx...ix</span><br><span class="line">    <span class="keyword">for</span> j in jy...iy</span><br><span class="line">        Ans += a[i][j];</span><br></pre></td></tr></table></figure></p>
-<p><strong>Algorithm2</strong><br>&emsp; We can easily find that we can use a 2-dimension array to represent the Sum of a submatrix.<br>&emsp; We define $Sum[x][y] = \sum<em>{i=1}^{x}\sum</em>{j=1}^{y}a[i][j]$<br>&emsp; The following pseudo-code can help you understand how to calculate it.<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i in <span class="number">1.</span>..n</span><br><span class="line">    <span class="keyword">for</span> j in <span class="number">1.</span>..n</span><br><span class="line">        Sum[i][j] = Sum[i][j - <span class="number">1</span>] + a[i][j];</span><br><span class="line"><span class="keyword">for</span> i in <span class="number">2.</span>..n</span><br><span class="line">    <span class="keyword">for</span> j in <span class="number">1.</span>..n</span><br><span class="line">        Sum[i][j] += Sum[i - <span class="number">1</span>][j];</span><br></pre></td></tr></table></figure></p>
+<p><strong>Algorithm2</strong><br>&emsp; We can easily find that we can use a 2-dimension array to represent the Sum of a submatrix.<br>&emsp; We define $Sum[x][y] = \sum_{i=1}^{x}\sum_{j=1}^{y}a[i][j]$<br>&emsp; The following pseudo-code can help you understand how to calculate it.<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i in <span class="number">1.</span>..n</span><br><span class="line">    <span class="keyword">for</span> j in <span class="number">1.</span>..n</span><br><span class="line">        Sum[i][j] = Sum[i][j - <span class="number">1</span>] + a[i][j];</span><br><span class="line"><span class="keyword">for</span> i in <span class="number">2.</span>..n</span><br><span class="line">    <span class="keyword">for</span> j in <span class="number">1.</span>..n</span><br><span class="line">        Sum[i][j] += Sum[i - <span class="number">1</span>][j];</span><br></pre></td></tr></table></figure></p>
 <p><strong>Then we get a new Sum fuction.</strong><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> Sum[ix][iy] + Sum[jx - <span class="number">1</span>][jy - <span class="number">1</span>] - Sum[jx - <span class="number">1</span>][iy] - Sum[ix][jy - <span class="number">1</span>];</span><br></pre></td></tr></table></figure></p>
 <p>&emsp; Then you can use Fuction Solver to calculate the answer.<br><strong>Algorithm3</strong><br>&emsp; A submatrix have four borders, they are upper and lower ones of a row and left and right ones of the column. Then, we can enumerate the left and right borders of the column, relating it to the Maximum Subsequence Sum problem in the textbook.<br>&emsp; We define $Sum[x][y] = \sum_{j=1}^{y}Sum[x][j]$<br>&emsp; We can calculate it as follow.<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i in <span class="number">1.</span>..n</span><br><span class="line">    <span class="keyword">for</span> j in <span class="number">1.</span>..n</span><br><span class="line">        Sum[i][j] = Sum[i][j - <span class="number">1</span>] + a[i][j];</span><br></pre></td></tr></table></figure></p>
 <p>&emsp; Then if we choose column $i$ and $j$ $( i &lt; j )$, we can let $val[x]= Sum[x][j] - Sum[x][i - 1]$ and use the solution for Subsequence Sum problem.  </p>
@@ -682,6 +682,58 @@
 
 
 
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
   
 
   
