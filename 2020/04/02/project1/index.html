@@ -67,7 +67,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/03/31/te1FhdxJuzEqfOB.png">
 <meta property="og:image" content="https://i.loli.net/2020/03/31/CivxAZmyX31VcHB.png">
 <meta property="og:image" content="https://i.loli.net/2020/03/31/VgdcltTCAU62uai.png">
-<meta property="og:updated_time" content="2020-04-02T12:57:46.475Z">
+<meta property="og:updated_time" content="2020-04-02T13:05:34.858Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="数据结构project1">
 <meta name="twitter:description" content="datastructure project1">
@@ -275,7 +275,7 @@
                 
               
 
-              <time title="创建时间：2020-04-02 16:45:34 / 修改时间：20:57:46" itemprop="dateCreated datePublished" datetime="2020-04-02T16:45:34+08:00">2020-04-02</time>
+              <time title="创建时间：2020-04-02 16:45:34 / 修改时间：21:05:34" itemprop="dateCreated datePublished" datetime="2020-04-02T16:45:34+08:00">2020-04-02</time>
             </span>
           
             
@@ -329,8 +329,70 @@
 <p>&emsp;This case is to test if algorithm2 can calculate the sum of a submatrix rightly.<br>&emsp;The right answer is 72.<br>&emsp;Program output is 72.<br>&emsp;Status: Pass. </p>
 <p>Case 2:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">5 </span><br><span class="line">-1 -1 -1 -1 -1</span><br><span class="line">-1 -1 -1 -1 -1</span><br><span class="line">-1 -1 -1 -1 -1</span><br><span class="line">-1 -1 -1 -1 -1</span><br><span class="line">-1 -1 -1 -1 -1</span><br></pre></td></tr></table></figure></p>
 <p>&emsp;This case is to test if program can correctly handle all negtive numbers cases.<br>&emsp;The right answer is 0.<br>&emsp;Program output is 0.<br>&emsp;Status: Pass. </p>
-<h1 id="Analysis-and-Comments"><a href="#Analysis-and-Comments" class="headerlink" title="Analysis and Comments"></a>Analysis and Comments</h1><p>&emsp;To enumerate a point, we need to enumerate x and y, x from $1$ to $n$ and y from $1$ to $n$. So, the time complexity of enumerating a point is $O(N^2)$.<br><strong>Algorithm1</strong><br>&emsp;<strong>Time complexity</strong>:For algorithm1, we need to enumerate two points to determine a submatrix, and the time complexity is $O(N ^ 4)$.And the calculation of the sum of this submatrix is $O(N^2)$. Thus, this algorithm’s time complexity is $O(N^6)$.<br>&emsp;<strong>Space complexity</strong>:In algorithm1, we use a $n\times n$ array $a[x][y]$ to store matrix. Thus, the space complexity of this algorithm is $O(N^2)$.<br><strong>Algorithm2</strong><br>&emsp;<strong>Time complexity</strong>:For algorithm2, we still need to enumerate two points, but we can know the sum of the submatrix in $O(1)$.The time complexity of enumerating two points is $O(N^4)$, and calculate $Sum$ array need $O(N^2)$. Finally, the time complexity of algorithm2 is $O(N^4)$.<br>&emsp;<strong>Space complexity</strong>:For algorithm2, we use two $n \times n$ array $a[x][y], Sum[x][y]$. The space complexity of algorithm2 is $O(N^2)$.<br><strong>Algorithm3</strong><br>&emsp;<strong>Time complexity</strong>:In algorithm3, we need to enumerate two columns, the complexity of that is $O(N^2)$, and for each of that, we will do an $O(n)$ algorithm to solve the Maximum Subsequence Sum problem. The time complexity of calculating $Sum[x][y]$ is $O(N^2)$.Thus the time complexity of algorithm3 is $O(N^3)$.<br>&emsp;<strong>Space complexity</strong>:In algorithm3, we use two $n\times n$ array $Sum[x][y], a[x][y]$. Thus, the space complexity of algorithm3 is $O(N^2)$.<br><strong>The comparasion of the three algorithms</strong><br>&emsp;The O(N^6) algorithm has to calculate the summary of every submatrix repeatedly. In comprison, the O(N^4) algorithm just calculates part of them,and then do some simple on work, which can save a lot of time.<br>&emsp;The O(N^3) algorithm look to transfer the two-dimensional problem into an one-dimensional one, with the sum of each coloum put into a single cell of an one-dimensional array.Then we can find that all we have to do is to scan such an array for once, just like what we did to the problem in the textbook in the easiest way.This algorithm is apparently smarter than the ones before, as it avoid some unnecessary work.<br>algorithm1|||||||<br>:-: | :-: | :-: | :-: | :-: | :-:| :-: |<br>N | $5$ | $10$ | $30$ | $50$ | $80$ | $100$ |<br>K | $100000$ | $1000$ | $1$ | $1$ | $1$ | $1$ |<br>Ticks| $1480$ | $462$ | $114$ | $3216$ | $21076$ | $51456$ |<br>Total Time|$1.48$|$0.462$|$0.114$|$3.216$|$21.076$|$51.456$|<br>Duration | $1.48e-5$ | $4.62e-4$ | $0.114$ | $3.216$ | $21.076$ | $51.456$ |</p>
+<h1 id="Analysis-and-Comments"><a href="#Analysis-and-Comments" class="headerlink" title="Analysis and Comments"></a>Analysis and Comments</h1><p>&emsp;To enumerate a point, we need to enumerate x and y, x from $1$ to $n$ and y from $1$ to $n$. So, the time complexity of enumerating a point is $O(N^2)$.<br><strong>Algorithm1</strong><br>&emsp;<strong>Time complexity</strong>:For algorithm1, we need to enumerate two points to determine a submatrix, and the time complexity is $O(N ^ 4)$.And the calculation of the sum of this submatrix is $O(N^2)$. Thus, this algorithm’s time complexity is $O(N^6)$.<br>&emsp;<strong>Space complexity</strong>:In algorithm1, we use a $n\times n$ array $a[x][y]$ to store matrix. Thus, the space complexity of this algorithm is $O(N^2)$.<br><strong>Algorithm2</strong><br>&emsp;<strong>Time complexity</strong>:For algorithm2, we still need to enumerate two points, but we can know the sum of the submatrix in $O(1)$.The time complexity of enumerating two points is $O(N^4)$, and calculate $Sum$ array need $O(N^2)$. Finally, the time complexity of algorithm2 is $O(N^4)$.<br>&emsp;<strong>Space complexity</strong>:For algorithm2, we use two $n \times n$ array $a[x][y], Sum[x][y]$. The space complexity of algorithm2 is $O(N^2)$.<br><strong>Algorithm3</strong><br>&emsp;<strong>Time complexity</strong>:In algorithm3, we need to enumerate two columns, the complexity of that is $O(N^2)$, and for each of that, we will do an $O(n)$ algorithm to solve the Maximum Subsequence Sum problem. The time complexity of calculating $Sum[x][y]$ is $O(N^2)$.Thus the time complexity of algorithm3 is $O(N^3)$.<br>&emsp;<strong>Space complexity</strong>:In algorithm3, we use two $n\times n$ array $Sum[x][y], a[x][y]$. Thus, the space complexity of algorithm3 is $O(N^2)$.<br><strong>The comparasion of the three algorithms</strong><br>&emsp;The O(N^6) algorithm has to calculate the summary of every submatrix repeatedly. In comprison, the O(N^4) algorithm just calculates part of them,and then do some simple on work, which can save a lot of time.<br>&emsp;The O(N^3) algorithm look to transfer the two-dimensional problem into an one-dimensional one, with the sum of each coloum put into a single cell of an one-dimensional array.Then we can find that all we have to do is to scan such an array for once, just like what we did to the problem in the textbook in the easiest way.This algorithm is apparently smarter than the ones before, as it avoid some unnecessary work.  </p>
 <p><strong>PS:NULL represent the time needed is too long to record.</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">algorithm1</th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">N</td>
+<td style="text-align:center">$5$</td>
+<td style="text-align:center">$10$</td>
+<td style="text-align:center">$30$</td>
+<td style="text-align:center">$50$</td>
+<td style="text-align:center">$80$</td>
+<td style="text-align:center">$100$</td>
+</tr>
+<tr>
+<td style="text-align:center">K</td>
+<td style="text-align:center">$100000$</td>
+<td style="text-align:center">$1000$</td>
+<td style="text-align:center">$1$</td>
+<td style="text-align:center">$1$</td>
+<td style="text-align:center">$1$</td>
+<td style="text-align:center">$1$</td>
+</tr>
+<tr>
+<td style="text-align:center">Ticks</td>
+<td style="text-align:center">$1480$</td>
+<td style="text-align:center">$462$</td>
+<td style="text-align:center">$114$</td>
+<td style="text-align:center">$3216$</td>
+<td style="text-align:center">$21076$</td>
+<td style="text-align:center">$51456$</td>
+</tr>
+<tr>
+<td style="text-align:center">Total Time</td>
+<td style="text-align:center">$1.48$</td>
+<td style="text-align:center">$0.462$</td>
+<td style="text-align:center">$0.114$</td>
+<td style="text-align:center">$3.216$</td>
+<td style="text-align:center">$21.076$</td>
+<td style="text-align:center">$51.456$</td>
+</tr>
+<tr>
+<td style="text-align:center">Duration</td>
+<td style="text-align:center">$1.48e-5$</td>
+<td style="text-align:center">$4.62e-4$</td>
+<td style="text-align:center">$0.114$</td>
+<td style="text-align:center">$3.216$</td>
+<td style="text-align:center">$21.076$</td>
+<td style="text-align:center">$51.456$</td>
+</tr>
+</tbody>
+</table>
+</div>
 <div class="table-container">
 <table>
 <thead>
@@ -353,7 +415,6 @@
 <td style="text-align:center">$50$</td>
 <td style="text-align:center">$80$</td>
 <td style="text-align:center">$100$</td>
-<td></td>
 </tr>
 <tr>
 <td style="text-align:center">K</td>
@@ -363,7 +424,6 @@
 <td style="text-align:center">$500$</td>
 <td style="text-align:center">$100$</td>
 <td style="text-align:center">$50$</td>
-<td></td>
 </tr>
 <tr>
 <td style="text-align:center">Ticks</td>
@@ -373,7 +433,6 @@
 <td style="text-align:center">$4235$</td>
 <td style="text-align:center">$5315$</td>
 <td style="text-align:center">$6095$</td>
-<td></td>
 </tr>
 <tr>
 <td style="text-align:center">Total Time</td>
@@ -383,7 +442,6 @@
 <td style="text-align:center">$4.235$</td>
 <td style="text-align:center">$5.315$</td>
 <td style="text-align:center">$6.095$</td>
-<td></td>
 </tr>
 <tr>
 <td style="text-align:center">Duration</td>
@@ -393,7 +451,6 @@
 <td style="text-align:center">$8.47e-3$</td>
 <td style="text-align:center">$5.32e-2$</td>
 <td style="text-align:center">$0.1219$</td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -420,7 +477,6 @@
 <td style="text-align:center">$50$</td>
 <td style="text-align:center">$80$</td>
 <td style="text-align:center">$100$</td>
-<td></td>
 </tr>
 <tr>
 <td style="text-align:center">K</td>
@@ -430,7 +486,6 @@
 <td style="text-align:center">$200$</td>
 <td style="text-align:center">$200$</td>
 <td style="text-align:center">$100$</td>
-<td></td>
 </tr>
 <tr>
 <td style="text-align:center">Ticks</td>
@@ -440,7 +495,6 @@
 <td style="text-align:center">$77$</td>
 <td style="text-align:center">$331$</td>
 <td style="text-align:center">$260$</td>
-<td></td>
 </tr>
 <tr>
 <td style="text-align:center">Total Time</td>
@@ -450,7 +504,6 @@
 <td style="text-align:center">$7.7e-2$</td>
 <td style="text-align:center">$3.31e-1$</td>
 <td style="text-align:center">$2.6e-1$</td>
-<td></td>
 </tr>
 <tr>
 <td style="text-align:center">Duration</td>
@@ -460,7 +513,6 @@
 <td style="text-align:center">$3.85e-4$</td>
 <td style="text-align:center">$1.66e-3$</td>
 <td style="text-align:center">$2.6e-3$</td>
-<td></td>
 </tr>
 </tbody>
 </table>
