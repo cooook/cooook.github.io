@@ -302,8 +302,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>关于unsorted bin atk的一些研究.  </p>
-<a id="more"></a>
+        <p>关于unsorted bin atk的一些研究.<br><a id="more"></a></p>
 <h1 id="0x0-条件-amp-效果"><a href="#0x0-条件-amp-效果" class="headerlink" title="0x0 条件&amp;效果"></a>0x0 条件&amp;效果</h1><p>Unsorted Bin Attack被利用的前提是控制Unsorted Bin Chunk的bk指针.<br>Unsorted Bin Attack可以达到的效果是实现修改任意地址值为一个较大的数值.  </p>
 <h1 id="0x1-Unsorted-Bin-回顾"><a href="#0x1-Unsorted-Bin-回顾" class="headerlink" title="0x1 Unsorted Bin 回顾"></a>0x1 Unsorted Bin 回顾</h1><h2 id="Unsorted-Bin-来源"><a href="#Unsorted-Bin-来源" class="headerlink" title="Unsorted Bin 来源."></a>Unsorted Bin 来源.</h2><ol>
 <li>当一个较大的chunk被分割成两半后, 如果剩下的部分大于MINSIZE, 就会被放到Unsorted Bin中.  </li>

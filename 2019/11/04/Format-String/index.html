@@ -310,10 +310,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>学习了一下格式化字符串漏洞, 简单总结一下. </p>
-<a id="more"></a> 
+        <p>学习了一下格式化字符串漏洞, 简单总结一下.<br><a id="more"></a> </p>
 <h1 id="0x0-printf-的原理"><a href="#0x0-printf-的原理" class="headerlink" title="0x0 printf 的原理"></a>0x0 printf 的原理</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> x = <span class="number">0</span>;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"x = %d"</span>, x);</span><br></pre></td></tr></table></figure>
-
 <p>首先, 将$0, addr of “x = %d”$入栈, 然后解析”x = %d”.  </p>
 <p>在进入 printf 之后，函数首先获取第一个参数，一个一个读取其字符会遇到两种情况</p>
 <ul>
@@ -322,7 +320,6 @@
 <li>如果没有字符，报错</li>
 <li>如果下一个字符是 %, 输出 %</li>
 <li>否则根据相应的字符，获取相应的参数，对其进行解析并输出<br>其他的格式化输出类似<h1 id="0x1-格式化字符串格式"><a href="#0x1-格式化字符串格式" class="headerlink" title="0x1 格式化字符串格式"></a>0x1 格式化字符串格式</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%[parameter][flags][field width][.precision][length]type</span><br></pre></td></tr></table></figure>
-
 </li>
 </ul>
 </li>
