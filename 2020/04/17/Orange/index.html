@@ -55,19 +55,19 @@
   };
 </script>
 
-  <meta name="description" content="关于unsorted bin atk的一些研究.">
+  <meta name="description" content="House of Orange 的基本方法">
 <meta name="keywords" content="堆">
 <meta property="og:type" content="article">
-<meta property="og:title" content="unsortedbin">
-<meta property="og:url" content="http://cooook.github.io/2020/02/22/unsortedbin/index.html">
+<meta property="og:title" content="House of Orange">
+<meta property="og:url" content="http://cooook.github.io/2020/04/17/Orange/index.html">
 <meta property="og:site_name" content="Cooook&#39;s Blog">
-<meta property="og:description" content="关于unsorted bin atk的一些研究.">
+<meta property="og:description" content="House of Orange 的基本方法">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-02-22T14:52:18.566Z">
+<meta property="og:updated_time" content="2020-04-16T16:38:32.809Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="unsortedbin">
-<meta name="twitter:description" content="关于unsorted bin atk的一些研究.">
-  <link rel="canonical" href="http://cooook.github.io/2020/02/22/unsortedbin/">
+<meta name="twitter:title" content="House of Orange">
+<meta name="twitter:description" content="House of Orange 的基本方法">
+  <link rel="canonical" href="http://cooook.github.io/2020/04/17/Orange/">
 
 
 <script id="page-configurations">
@@ -81,7 +81,7 @@
   };
 </script>
 
-  <title>unsortedbin | Cooook's Blog</title>
+  <title>House of Orange | Cooook's Blog</title>
   
 
 
@@ -242,7 +242,7 @@
   
   
   <div class="post-block post">
-    <link itemprop="mainEntityOfPage" href="http://cooook.github.io/2020/02/22/unsortedbin/">
+    <link itemprop="mainEntityOfPage" href="http://cooook.github.io/2020/04/17/Orange/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Cooook">
@@ -254,7 +254,7 @@
       <meta itemprop="name" content="Cooook's Blog">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">unsortedbin
+        <h1 class="post-title" itemprop="name headline">House of Orange
 
           
         </h1>
@@ -270,7 +270,7 @@
                 
               
 
-              <time title="创建时间：2020-02-22 22:32:28 / 修改时间：22:52:18" itemprop="dateCreated datePublished" datetime="2020-02-22T22:32:28+08:00">2020-02-22</time>
+              <time title="创建时间：2020-04-17 00:05:37 / 修改时间：00:38:32" itemprop="dateCreated datePublished" datetime="2020-04-17T00:05:37+08:00">2020-04-17</time>
             </span>
           
             
@@ -302,17 +302,34 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>关于unsorted bin atk的一些研究.<br><a id="more"></a></p>
-<h1 id="0x0-条件-amp-效果"><a href="#0x0-条件-amp-效果" class="headerlink" title="0x0 条件&amp;效果"></a>0x0 条件&amp;效果</h1><p>Unsorted Bin Attack被利用的前提是控制Unsorted Bin Chunk的bk指针.<br>Unsorted Bin Attack可以达到的效果是实现修改任意地址值为一个较大的数值.  </p>
-<h1 id="0x1-Unsorted-Bin-回顾"><a href="#0x1-Unsorted-Bin-回顾" class="headerlink" title="0x1 Unsorted Bin 回顾"></a>0x1 Unsorted Bin 回顾</h1><h2 id="Unsorted-Bin-来源"><a href="#Unsorted-Bin-来源" class="headerlink" title="Unsorted Bin 来源."></a>Unsorted Bin 来源.</h2><ol>
-<li>当一个较大的chunk被分割成两半后, 如果剩下的部分大于MINSIZE, 就会被放到Unsorted Bin中.  </li>
-<li>释放一个不属于 fast bin 的 chunk, 并且该 chunk 不和 top chunk 紧邻时, 该 chunk 会被首先放到 unsorted bin 中. 关于 top chunk 的解释, 请参考下面的介绍.  </li>
-<li>当进行 malloc_consolidate 时, 可能会把合并后的 chunk 放到 unsorted bin 中, 如果不是和 top chunk 近邻的话.  </li>
+        <p>House of Orange 的基本方法<br><a id="more"></a><br>来看看House of Orange 的用法.  </p>
+<h1 id="0x00-概述"><a href="#0x00-概述" class="headerlink" title="0x00 概述"></a>0x00 概述</h1><p>House of Orange 的利用比较特殊，首先需要目标漏洞是堆上的漏洞但是特殊之处在于题目中不存在 free 函数或其他释放堆块的函数。我们知道一般想要利用堆漏洞，需要对堆块进行 malloc 和 free 操作，但是在 House of Orange 利用中无法使用 free 函数，因此 House of Orange 核心就是通过漏洞利用获得 free 的效果。</p>
+<h1 id="0x01-原理"><a href="#0x01-原理" class="headerlink" title="0x01 原理"></a>0x01 原理</h1><p>House of Orange 的核心在于没有free函数的情况下得到一个释放的堆块(unsorted bin). 当我们的top chunk不能慢慢组malloc 的分配需求的时候, 会将top chunk放到unsorted bin中.<br>我们来看一下这个过程的详细情况，我们假设目前的 top chunk 已经不满足 malloc 的分配需求。 首先我们在程序中的malloc调用会执行到 libc.so 的_int_malloc函数中，在_int_malloc函数中，会依次检验 fastbin、small bins、unsorted bin、large bins 是否可以满足分配要求，因为尺寸问题这些都不符合。接下来_int_malloc函数会试图使用 top chunk，在这里 top chunk 也不能满足分配的要求，因此会执行如下分支。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Otherwise, relay to handle system-dependent cases</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">void</span> *p = sysmalloc(nb, av);</span><br><span class="line">      <span class="keyword">if</span> (p != <span class="literal">NULL</span> &amp;&amp; __builtin_expect (perturb_byte, <span class="number">0</span>))</span><br><span class="line">        alloc_perturb (p, bytes);</span><br><span class="line">      <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>此时 ptmalloc 已经不能满足用户申请堆内存的操作，需要执行 sysmalloc 来向系统申请更多的空间。 但是对于堆来说有 mmap 和 brk 两种分配方式，我们需要让堆以 brk 的形式拓展，之后原有的 top chunk 会被置于 unsorted bin 中。<br>然后我们要实现的是brk的chunk, 这里需要绕过libc中的一些check.<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((<span class="keyword">unsigned</span> <span class="keyword">long</span>)(nb) &gt;= (<span class="keyword">unsigned</span> <span class="keyword">long</span>)(mp_.mmap_threshold) &amp;&amp; (mp_.n_mmaps &lt; mp_.n_mmaps_max))</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>malloc 的尺寸不能大于mmp_.mmap_threshold<br>如果所需分配的 chunk 大小大于 mmap 分配阈值，默认为 128K，并且当前进程使用 mmap() 分配的内存块小于设定的最大值，将使用 mmap() 系统调用直接向操作系统申请内存。<br>在 sysmalloc 函数中存在对 top chunk size 的 check，如下<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">assert((old_top == initial_top(av) &amp;&amp; old_size == <span class="number">0</span>) ||</span><br><span class="line">     ((<span class="keyword">unsigned</span> <span class="keyword">long</span>) (old_size) &gt;= MINSIZE &amp;&amp;</span><br><span class="line">      prev_inuse(old_top) &amp;&amp;</span><br><span class="line">      ((<span class="keyword">unsigned</span> <span class="keyword">long</span>)old_end &amp; pagemask) == <span class="number">0</span>));</span><br></pre></td></tr></table></figure>
+</li>
 </ol>
-<h2 id="Unsorted-Bin-使用"><a href="#Unsorted-Bin-使用" class="headerlink" title="Unsorted Bin 使用"></a>Unsorted Bin 使用</h2><ol>
-<li>Unsorted Bin 在使用的过程中, 采用的遍历顺序是 FIFO, 即插入的时候插入到 unsorted bin 的头部, 取出的时候从链表尾获取.</li>
-<li>在程序 malloc 时, 如果在 fastbin, small bin 中找不到对应大小的 chunk, 就会尝试从 Unsorted Bin 中寻找 chunk.如果取出来的 chunk 大小刚好满足, 就会直接返回给用户, 否则就会把这些 chunk 分别插入到对应的 bin 中.</li>
+<p>这里检查了 top chunk 的合法性，如果第一次调用本函数，top chunk 可能没有初始化，所以可能 old_size 为 0。 如果 top chunk 已经初始化了，那么 top chunk 的大小必须大于等于 MINSIZE，因为 top chunk 中包含了 fencepost，所以 top chunk 的大小必须要大于 MINSIZE。其次 top chunk 必须标识前一个 chunk 处于 inuse 状态，并且 top chunk 的结束地址必定是页对齐的。此外 top chunk 除去 fencepost 的大小必定要小于所需 chunk 的大小，否则在_int_malloc() 函数中会使用 top chunk 分割出 chunk。<br>我们总结一下伪造的 top chunk size 的要求</p>
+<ul>
+<li><ol>
+<li>伪造的 size 必须要对齐到内存页, 一般是4kb</li>
 </ol>
+</li>
+<li><ol>
+<li>size要大于MINSIZE(0X10)</li>
+</ol>
+</li>
+<li><ol>
+<li>size要小于之后申请的chunk size + MINSIZE</li>
+</ol>
+</li>
+<li><ol>
+<li>size的prev inuse = 1<br>之后原有的 top chunk 就会执行_int_free从而顺利进入 unsorted bin 中。</li>
+</ol>
+</li>
+</ul>
+<p><strong>内存页对齐</strong><br>什么是对齐到内存页呢？我们知道现代操作系统都是以内存页为单位进行内存管理的，一般内存页的大小是 4kb。那么我们伪造的 size 就必须要对齐到这个尺寸。在覆盖之前 top chunk 的 size 大小是 20fe1，通过计算得知 0x602020+0x20fe0=0x623000 是对于 0x1000（4kb）对齐的。<br>因此我们伪造的 fake_size 可以是 0x0fe1、0x1fe1、0x2fe1、0x3fe1 等对 4kb 对齐的 size。而 0x40 不满足对齐，因此不能实现利用。<br>一个例子<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> fake_size 0x1fe1</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">void</span> *ptr;</span><br><span class="line"></span><br><span class="line">    ptr=<span class="built_in">malloc</span>(<span class="number">0x10</span>);</span><br><span class="line">    ptr=(<span class="keyword">void</span> *)((<span class="keyword">int</span>)ptr+<span class="number">24</span>);</span><br><span class="line"></span><br><span class="line">    *((<span class="keyword">long</span> <span class="keyword">long</span>*)ptr)=fake_size;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">malloc</span>(<span class="number">0x2000</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">malloc</span>(<span class="number">0x60</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
     </div>
 
@@ -338,8 +355,8 @@
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
-                <a href="/2020/02/19/babyfengshui/" rel="next" title="babyfengshui">
-                  <i class="fa fa-chevron-left"></i> babyfengshui
+                <a href="/2020/04/06/Linux-fork/" rel="next" title="Linux-fork">
+                  <i class="fa fa-chevron-left"></i> Linux-fork
                 </a>
               
             </div>
@@ -347,10 +364,6 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-              
-                <a href="/2020/02/26/IO-FILE/" rel="prev" title="IO_FILE">
-                  IO_FILE <i class="fa fa-chevron-right"></i>
-                </a>
               
             </div>
           </div>
@@ -399,7 +412,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-条件-amp-效果"><span class="nav-number">1.</span> <span class="nav-text">0x0 条件&amp;效果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-Unsorted-Bin-回顾"><span class="nav-number">2.</span> <span class="nav-text">0x1 Unsorted Bin 回顾</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Unsorted-Bin-来源"><span class="nav-number">2.1.</span> <span class="nav-text">Unsorted Bin 来源.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unsorted-Bin-使用"><span class="nav-number">2.2.</span> <span class="nav-text">Unsorted Bin 使用</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-概述"><span class="nav-number">1.</span> <span class="nav-text">0x00 概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-原理"><span class="nav-number">2.</span> <span class="nav-text">0x01 原理</span></a></li></ol></div>
         
       </div>
       <!--/noindex-->
