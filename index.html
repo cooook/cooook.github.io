@@ -330,138 +330,6 @@
   
   
   <div class="post-block home">
-    <link itemprop="mainEntityOfPage" href="http://blog.cooook.icu/2020/04/30/cy_2020G11_P3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Cooook">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cooook's Blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-            
-            <a href="/2020/04/30/cy_2020G11_P3/" class="post-title-link" itemprop="url">未命名</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-04-30 17:34:46" itemprop="dateCreated datePublished" datetime="2020-04-30T17:34:46+08:00">2020-04-30</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-01 21:12:34" itemprop="dateModified" datetime="2020-05-01T21:12:34+08:00">2020-05-01</time>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><center><font size="10"> Public Bike Management </font></center></p>
-<p><center><font size="5"> Date: 2020-4-29   </font> </center><br><br><br><br><br><br><br><br><br><br><br><br><br><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>The programme is aimed to simulate the management of a public bike service. Once a station is empty or full, it must be adjust to the perfect condition, so as all the other stations on the way from PBMC to the problem station.<br>To choose a best path, we need to consider the following three factors: distance, number of bikes sent from PBMC and number of those sent back. Their priorities are in a descending order in our consideration.<br>Generally the problem can be seen as an upgraded shortest path problem.</p>
-<h1 id="Algorithm-Specification"><a href="#Algorithm-Specification" class="headerlink" title="Algorithm Specification"></a>Algorithm Specification</h1><p>First we need to store the edge value. For each station, we use a linked list(a[ ]) to store the value of all its edges, and then another linked list(first[ ])to store the head of every node’s edge list.<br>u, v and w are three variables appear in each of the N lines.  We use fuction <em>push</em> to build a single directed edge and function <em>AddEdge</em> to build an undirected edge.  </p>
-<p><strong>Store Edge Value</strong><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">function <span class="title">push</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span>&amp; u, <span class="keyword">const</span> <span class="keyword">int</span>&amp; v, <span class="keyword">const</span> <span class="keyword">int</span>&amp; w)</span></span></span><br><span class="line">    set a[e].v as v;</span><br><span class="line">    <span class="built_in">set</span> a[e].w as w;</span><br><span class="line">    <span class="built_in">set</span> a[e].next as first[u];</span><br><span class="line">    <span class="built_in">set</span> first[u] as e++;  </span><br><span class="line"></span><br><span class="line"><span class="function">function <span class="title">AddEdge</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span>&amp; u, <span class="keyword">const</span> <span class="keyword">int</span>&amp; v, <span class="keyword">const</span> <span class="keyword">int</span>&amp; w)</span>  </span></span><br><span class="line"><span class="function">    <span class="title">push</span><span class="params">(u, v, w)</span></span>;</span><br><span class="line">    push(v, u, w);</span><br></pre></td></tr></table></figure></p>
-<p>Function AddEdge is called N times since there are N edges.</p>
-<p><strong>Definition of struct <em>Value</em></strong><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Value</span>&#123;</span></span><br><span class="line">    <span class="keyword">int</span> dis, take, now;</span><br><span class="line">    Value(); </span><br><span class="line">    <span class="keyword">bool</span> <span class="keyword">operator</span> &lt; (<span class="keyword">const</span> Value&amp; x) <span class="keyword">const</span> ;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
-<p>Struct <em>Value</em> contains three factors we need to choose the best path. </p>
-<p><strong>Reload operator &lt;</strong><br>Since we need to make some comparison while deciding the best path, all the three factors mentioned before must be considered according to their priorities. Here we reload operator &lt; to simplify our coding. After that we can directly judge between two stations to update our best solution.<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Reload <span class="keyword">operator</span> &lt; </span><br><span class="line">    <span class="keyword">if</span> dis eq. x.dis</span><br><span class="line">        <span class="keyword">if</span> take eq. x.take</span><br><span class="line">            <span class="keyword">return</span> now &lt; x.now;</span><br><span class="line">        <span class="keyword">else</span> </span><br><span class="line">            <span class="keyword">return</span> take &lt; x.take</span><br><span class="line">    <span class="keyword">return</span> dis &lt; x.dis;</span><br></pre></td></tr></table></figure></p>
-<p>As we can see, <em>dis</em> is the factor we give thought to in the first place,  followed by <em>take</em> and <em>now</em>.  </p>
-<p><strong>Dijkstra Algorithm</strong><br>On the basis of all the work we have done, we can now adapt Dijkstra’s Algorithm to finally complete our job. But before that we must prove the feasibility of the idea.<br>It is crucial that all the edge values are positive. To illustrate the point, let’s look at an example. Once we have decided $dis_u$ = $dis_v$, then the conclusion is fixed and no extra adjustment shall be made later. That is to say, even if there is another way from u to v, it’s definitely true that $dis_v$+W &gt; $dis_u$ because W is always positive. Thus, whatever the situation, $dis_u$ is still the shorter one.  </p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Solver</span><span class="params">()</span>  </span>&#123;</span><br><span class="line">    dis[<span class="number">0</span>].dis = <span class="number">0</span>;                        </span><br><span class="line">    Value tmp; <span class="keyword">int</span> id;                          </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> T = <span class="number">0</span>; T &lt;= n; ++T) &#123;          </span><br><span class="line">        tmp.dis = Inf;                      </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= n; ++i)          </span><br><span class="line">            <span class="keyword">if</span> (!vis[i] &amp;&amp; dis[i] &lt; tmp)       </span><br><span class="line">                tmp = dis[i], id = i; </span><br><span class="line">        </span><br><span class="line">        vis[id] = <span class="literal">true</span>;                     </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = first[id]; i; i = a[i].next) &#123;</span><br><span class="line">            tmp.dis = dis[id].dis + a[i].w;        </span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dis[id].now + bike_num[a[i].v] &lt; <span class="number">0</span>) </span><br><span class="line">                tmp.take = dis[id].take - bike_num[a[i].v] - dis[id].now, tmp.now = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">else</span> tmp.now = dis[id].now + bike_num[a[i].v], tmp.take = dis[id].take;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (tmp &lt; dis[a[i].v])  </span><br><span class="line">                dis[a[i].v] = tmp, prev[a[i].v] = id;  </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>N is the number of nodes and E is the number of edges. We can see that there is a double-nested loop, so the time complexity of the algorithm is $O(N^2+E)$.  The space complexity is $O(N+E)$.  </p>
-<p><strong>Function Print</strong><br>Finally we use recursion to output the result.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Print(int x, bool opt)   </span><br><span class="line">    if (!x) return printf(&quot;0-&gt;&quot;), void();</span><br><span class="line">    Print(prev[x], true);</span><br><span class="line">    printf(&quot;%d&quot;, x);</span><br><span class="line">    printf(opt ? &quot;-&gt;&quot; : &quot; &quot;);</span><br></pre></td></tr></table></figure></p>
-<h1 id="Testing-Results"><a href="#Testing-Results" class="headerlink" title="Testing Results"></a>Testing Results</h1><p>Case 1:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">100 7 7 9</span><br><span class="line">30 40 70 70 40 30 0</span><br><span class="line">0 1 2</span><br><span class="line">0 2 2</span><br><span class="line">0 3 2</span><br><span class="line">1 4 2</span><br><span class="line">2 5 1</span><br><span class="line">3 6 2</span><br><span class="line">4 7 2</span><br><span class="line">5 7 1</span><br><span class="line">6 7 2</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;A random case to test if the programme is able to work properly.<br>&emsp;The expected output is 70 0-&gt;2-&gt;5-&gt;7 0.<br>&emsp;Program output is 70 0-&gt;2-&gt;5-&gt;7 0.<br>&emsp;Status: Pass.   </p>
-<p>Case 2:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">10 4 4 8</span><br><span class="line">7 6 4 0</span><br><span class="line">0 1 1 </span><br><span class="line">0 2 2</span><br><span class="line">0 3 2</span><br><span class="line">1 2 1</span><br><span class="line">2 3 2</span><br><span class="line">1 4 2</span><br><span class="line">2 4 1</span><br><span class="line">3 4 2</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;A random case to test if the programme is able to work properly.<br>&emsp;The expected output is 3 0-&gt;1-&gt;4 0.<br>&emsp;Program output is 3 0-&gt;1-&gt;4 0.<br>&emsp;Status: Pass.   </p>
-<p>Case 3:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">10 7 7 8</span><br><span class="line">3 3 8 8 8 9 0</span><br><span class="line">0 1 3</span><br><span class="line">0 2 6</span><br><span class="line">1 3 4</span><br><span class="line">2 4 1</span><br><span class="line">3 5 3</span><br><span class="line">4 6 2</span><br><span class="line">5 7 1</span><br><span class="line">6 7 2</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;A special case to test if the programme can output the path that requires minimum number of bikes taken back.<br>&emsp;The expected output is 2 0-&gt;1-&gt;3-&gt;5-&gt;7 1.<br>&emsp;Program output is 2 0-&gt;1-&gt;3-&gt;5-&gt;7 1.<br>&emsp;Status: Pass. </p>
-<p>Case 4:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">10 4 4 6</span><br><span class="line">7 5 2 10</span><br><span class="line">0 1 2</span><br><span class="line">0 2 1</span><br><span class="line">0 3 3</span><br><span class="line">1 4 2</span><br><span class="line">2 4 3</span><br><span class="line">3 4 1</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;A random case to test if the programme is able to work properly(only back).<br>&emsp;The expected output is 0 0-&gt;2-&gt;4 5.<br>&emsp;Program output is 0 0-&gt;2-&gt;4 5.<br>&emsp;Status: Pass.  </p>
-<h1 id="Analysis-and-Comments"><a href="#Analysis-and-Comments" class="headerlink" title="Analysis and Comments"></a>Analysis and Comments</h1><p>&emsp;Now we have get a $O(N^2+E)$ algorithm. However, we can do better.<br>&emsp;Noticed that we use a for loop to find the best unvisited node. Its time complexity is $O(N)$. We can use heap to optimize it.<br>&emsp;If a node doesn’t in the heap, it’s easy. We just push it and its value into the heap. But what if it’s in the heap? We still push it and its value into the heap if this node have better value. Because we will first get this node with better value and we just need to judge if the node pop from heap is visited. Thus, we optimize this process to $O(logN)$. But this project’s N will not be bigger than 500, we can use $O(N^2+E)$ algorithm to solve this problem.<br>&emsp;And maybe we can solve this problem in another way. After we find the shortest path, the path will not contain cycles and we will get a DAG. Then we can use top sort to find Answer. Its time complexity is still $O(N^2+E)$ for we still need to find the shortest path.</p>
-<p><strong>Declaration</strong><br>&emsp;<b><em>We hereby declare that all the work done in this project titled<br>“Public Bike Management” is of our independent effort as a group.</em></b></p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-          <div class="post-eof"></div>
-        
-      </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-        <article itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block home">
     <link itemprop="mainEntityOfPage" href="http://blog.cooook.icu/2020/04/17/Orange/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -533,132 +401,6 @@
             </div>
           
           <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-          <div class="post-eof"></div>
-        
-      </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-        <article itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block home">
-    <link itemprop="mainEntityOfPage" href="http://blog.cooook.icu/2020/04/09/cy_2020G11_P2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Cooook">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cooook's Blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-            
-            <a href="/2020/04/09/cy_2020G11_P2/" class="post-title-link" itemprop="url">未命名</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-04-09 19:40:09" itemprop="dateCreated datePublished" datetime="2020-04-09T19:40:09+08:00">2020-04-09</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-04-14 12:22:09" itemprop="dateModified" datetime="2020-04-14T12:22:09+08:00">2020-04-14</time>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><br><br><br><br><br><br><br><br><br><br><br><br><br></p>
-<p><br></p>
-<p><center><font size="10"> Build A Binary Search Tree </font></center></p>
-<p><center><font size="8"> Yifan Zhang, Xinyu Yu, Xixi Li </font></center></p>
-<p><center><font size="5"> Date: 2020-4-8   </font> </center><br><br><br><br><br><br><br><br><br><br><br><br><br><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<p><br></p>
-<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>&emsp; The programme is supposed to build a binary search tree according to the information given by the administrator and fill into the tree with the interger keys given in a unique way determined by the structrue of the tree.The keys should thus be rearranged and output by a level order travesal of the BST.<br>&emsp; Our report is aimed at illstrating how we solved the problem in a comparable simple way with the shortest time bound. It shows a possible application of the binary search tree we have learned about.</p>
-<h1 id="Algorithm-Specification"><a href="#Algorithm-Specification" class="headerlink" title="Algorithm Specification"></a>Algorithm Specification</h1><p>We first build the BST as below.<br>Node[i] stores the address of the corresponding struct of the ith node.<br><strong>Build tree</strong><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i in <span class="number">0.</span>..n<span class="number">-1</span> </span><br><span class="line">    Input LeftSon,RightSon.</span><br><span class="line">    <span class="keyword">if</span> LeftSon eq. <span class="number">-1</span></span><br><span class="line">        Set Node[i] -&gt; ls as <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">else</span> </span><br><span class="line">        Set Node[i] -&gt; ls as Node[LeftSon], Judge[LeftSon] as <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">if</span> RightSon eq. <span class="number">-1</span>                        </span><br><span class="line">        Set Node[i] -&gt; rs as <span class="literal">NULL</span>;      </span><br><span class="line">    <span class="keyword">else</span> </span><br><span class="line">        Set Node[i] -&gt; rs as Node[RightSon], Judge[RightSon] as <span class="literal">true</span>;</span><br><span class="line">    Set Node[i] -&gt; Size as <span class="number">1</span>;</span><br></pre></td></tr></table></figure></p>
-<p>This for loop iterated n times,so the time complexity is $O(N)$.</p>
-<p>Since we are supposed to output the keys in specific order,we now deal with the given intergers.<br><strong>Sort the numbers</strong><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i in <span class="number">0.</span>..n<span class="number">-1</span></span><br><span class="line">    input val[i]   </span><br><span class="line">sort val <span class="built_in">array</span>;</span><br></pre></td></tr></table></figure></p>
-<p>Here we use library function sort, and the time complexity is $O(nlogn)$.  </p>
-<p>It’s clear that each key correspands to an identity from 0 to 8. As we have sorted the value of keys before, we now need to know the rank of every node in the BST so that we can put the keys into them. After some discussion, we believe the rank can be decided by two variables named <em>$Size$</em> and <em>$k$</em>. <em>$Size_u$</em> means the number of all nodes in the subtree whose root is node u.<br>k is the number of nodes which are not in the subtree u but their value are smaller than the node u’s.<br><strong>Get Size</strong><br>&emsp; We can use a DFS(deep first search) to get the Size of every subtree. When we are dealing with the node u, we should first deal with its children.<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">function <span class="title">dfs</span><span class="params">(PtrToNode u)</span> </span></span><br><span class="line">    if u -&gt; ls not equals to NULL</span><br><span class="line">        dfs(u -&gt; ls);</span><br><span class="line">    <span class="keyword">if</span> u -&gt; Rs <span class="keyword">not</span> equals to <span class="literal">NULL</span></span><br><span class="line">        dfs(u -&gt; rs);</span><br><span class="line">    u -&gt; Size equals to <span class="number">1</span> + Get_Size(u -&gt; ls) + Get_Size(u -&gt; rs);</span><br></pre></td></tr></table></figure></p>
-<p>Get_Size(u) ==&gt; if u == NULL, 0 else u -&gt; Size<br>Each node is visited only once, so the time complexity is $O(N)$.   </p>
-<p><strong>Get k and rank</strong><br>&emsp; As we can see, what we need is the rank of each node in the tree, so that we can decide which key to put in it. To get the rank, we first have to learn about all the nodes whose value is smaller than the current node. So we generally divide them into two parts————the nodes that are in this subtree whose value is smaller than its and those that are not but still satisfies the value condition.   Suppose the current node as the root of a subtree, it’s clear that all the descendants of its left child and the left child itself are smaller than the root. And the number of the qualified nodes, in this situation, is the Size of the left son which we have calculated before in another function.  Now we have to get k. First we have to know whether Node u is the left or right son of its parent.If it is a left son, then its value is definitely smaller than the parent’s, not to mention the sibling and its descendants, so no change is to be made to the current k. If it is a right son, than the Size of its parent has to be plused.<br>&emsp; Thus, till now we have already got all we need to caculate the rank of Node u, and all the work is done by a single function as below.<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Solve(PtrToNode u, <span class="keyword">int</span> k) </span><br><span class="line">    <span class="function"><span class="built_in">set</span> rank <span class="title">as</span> <span class="params">(Get_Size(u -&gt; ls) + k + <span class="number">1</span>)</span></span>;     </span><br><span class="line">    <span class="built_in">set</span> u -&gt; val as val[rank - <span class="number">1</span>];               </span><br><span class="line">    <span class="keyword">if</span> (u -&gt; ls) </span><br><span class="line">        <span class="function">call <span class="title">Solve</span><span class="params">(u -&gt; ls, k)</span></span>;       </span><br><span class="line">    <span class="keyword">if</span> (u -&gt; rs) </span><br><span class="line">        <span class="function">call <span class="title">Solve</span><span class="params">(u -&gt; rs, k + Get_Size(u -&gt; ls) + <span class="number">1</span>)</span></span>;</span><br></pre></td></tr></table></figure></p>
-<p>Here each node is visited only once as well, so the time complexity is $O(N)$.    </p>
-<h1 id="Testing-Results"><a href="#Testing-Results" class="headerlink" title="Testing Results"></a>Testing Results</h1><p>Case 1:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">8</span><br><span class="line"> 1  5</span><br><span class="line"> 2  3</span><br><span class="line">-1 -1</span><br><span class="line"> 4 -1</span><br><span class="line">-1 -1</span><br><span class="line">-1  6</span><br><span class="line">-1  7</span><br><span class="line">-1 -1</span><br><span class="line">13 57 23 86 55 35 29 77</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;A random case to test if the programme is able to work properly.<br>&emsp;The expected output is 55 23 57 13 35 77 29 86.<br>&emsp;Program output is 55 23 57 13 35 77 29 86.<br>&emsp;Status: Pass.   </p>
-<p>Case 2:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">7 </span><br><span class="line"> 1  5</span><br><span class="line">-1  2</span><br><span class="line"> 3  4</span><br><span class="line">-1 -1</span><br><span class="line">-1 -1</span><br><span class="line">-1  6</span><br><span class="line">-1 -1</span><br><span class="line">58 11 20 39 65 77 42</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;A random case to test if the programme is able to work properly.<br>&emsp;The expected output is 58 11 65 39 77 20 42.<br>&emsp;Program output is 58 11 65 39 77 20 42.<br>&emsp;Status: Pass.   </p>
-<p>Case 3:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">10</span><br><span class="line">1 2</span><br><span class="line">3 -1</span><br><span class="line">4 9</span><br><span class="line">8 -1</span><br><span class="line">5 -1</span><br><span class="line">6 7</span><br><span class="line">-1 -1</span><br><span class="line">-1 -1</span><br><span class="line">-1 -1</span><br><span class="line">-1 -1</span><br><span class="line">5 1 94 51 30 20 20 8 74 57</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;A random case to test if the programme is able to work properly.<br>&emsp;The expected output is 20 8 74 5 57 94 1 30 20 51.<br>&emsp;Program output is 20 8 74 5 57 94 1 30 20 51.<br>&emsp;Status: Pass. </p>
-<p>Case 4:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">5</span><br><span class="line"> 1 -1</span><br><span class="line"> 2 -1</span><br><span class="line"> 3 -1</span><br><span class="line"> 4 -1</span><br><span class="line">-1 -1</span><br><span class="line">18 34 15 26 8</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;A special case where a tree chain is built to test if the programme is able to work properly.<br>&emsp;The expected output is 34 26 18 15 8.<br>&emsp;Program output is 34 26 18 15 8.<br>&emsp;Status: Pass.  </p>
-<p>Case 5:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">7</span><br><span class="line"> 1  4</span><br><span class="line"> 2  3</span><br><span class="line">-1 -1</span><br><span class="line">-1 -1</span><br><span class="line"> 5  6</span><br><span class="line">-1 -1</span><br><span class="line">-1 -1</span><br><span class="line">18 91 60 54 23 48 12</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;A special case where a perfect binary tree is built to test if the programme is able to work properly.<br>&emsp;The expected output is 48 18 60 12 23 54 91.<br>&emsp;Program output is 48 18 60 12 23 54 91.<br>&emsp;Status: Pass.  </p>
-<h1 id="Analysis-and-Comments"><a href="#Analysis-and-Comments" class="headerlink" title="Analysis and Comments"></a>Analysis and Comments</h1><p>&emsp; First, our program use dynamic memory application, we malloc $n <em> sizeof(node)$ memory as a memory pool to speed accelerate every node get their address of struct node, if not, every node will use malloc and the time cost will increase. The time complexity of memory application is $O(1)$ and build tree structure is $O(n)$. The memory used there is $n </em> sizeof(node)$ + $n * size_t$ bytes, so the space complexity there is $O(n)$.<br>&emsp; Then, we use library function sort to get n integer sorted. The complexity of this process is $O(nlogn)$, and there we use a n size array to store the integer and get them sorted, the space complexity is $O(n)$.<br>&emsp; Next, we use a recursive function to calc every subtree’s size. In this process, every node will be visited only once, so the time complexity of this process is $O(n)$. We use a n size int array to store every subtree’s node, so the space complexity of this process is $O(n)$.<br>&emsp; After that, we use another recursive function to calc every node’s rank in the tree , with the help of array size, we can calc every node’s rank rk in $O(1)$, and set its value to the rkth largest value. Because the val array is sorted, so we can use $val_{rank-1}$ to get the rkth largest value easily. The same as above, every node will be visited only once and the time complexity is $O(n)$, and we just use constant extra space. So the space complexity of this is $O(1)$.<br>&emsp; Last, we use a queue to print the level order traversal sequence of that tree. The time complexity is $O(n)$ and space complexity is $O(n)$.<br>&emsp; Thus, the program’s time complexity is $O(nlogn)$ and space complexity is $O(n)$.<br>&emsp; First this algorithm consider some case of the error input such as don’t construct a tree or construct a forest. There may be other cases we didn’t considered. Second, the time complexity of this algorithm is very excellent, the limit of the time complexity is time complexity of quick sort, maybe we can use special sort method for special data to get more excellent time complexity.  </p>
-<p><strong>Declaration</strong><br>&emsp;<b><em>We hereby declare that all the work done in this project titled<br>“Build a Binary Search Tree” is of our independent effort as a group.</em></b></p>
-
         
       
     </div>
@@ -1265,6 +1007,202 @@
   </article>
 
     
+        <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block home">
+    <link itemprop="mainEntityOfPage" href="http://blog.cooook.icu/2020/03/10/SROP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cooook">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cooook's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+            
+            <a href="/2020/03/10/SROP/" class="post-title-link" itemprop="url">初探SROP</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-10 23:36:04" itemprop="dateCreated datePublished" datetime="2020-03-10T23:36:04+08:00">2020-03-10</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-11 00:41:02" itemprop="dateModified" datetime="2020-03-11T00:41:02+08:00">2020-03-11</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/学习笔记/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>SROP初探<br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2020/03/10/SROP/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+          <div class="post-eof"></div>
+        
+      </footer>
+  </div>
+  
+  
+  
+  </article>
+
+    
+        <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block home">
+    <link itemprop="mainEntityOfPage" href="http://blog.cooook.icu/2020/02/26/IO-FILE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cooook">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cooook's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+            
+            <a href="/2020/02/26/IO-FILE/" class="post-title-link" itemprop="url">IO_FILE</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-02-26 16:34:28 / 修改时间：21:54:54" itemprop="dateCreated datePublished" datetime="2020-02-26T16:34:28+08:00">2020-02-26</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/学习笔记/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>学习了一下IO_FILE一些相关知识, 做一下笔记.<br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2020/02/26/IO-FILE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+          <div class="post-eof"></div>
+        
+      </footer>
+  </div>
+  
+  
+  
+  </article>
+
+    
   </div>
 
   
@@ -1317,7 +1255,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">22</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1441,11 +1379,11 @@
       
     
       
-    
-      
-    
-      
         
+      
+    
+      
+    
       
     
       
