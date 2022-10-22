@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/pikaqiu.ico?v=7.4.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Linux 下一些command的总结.">
+<meta name="keywords" content="Linux Kernel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux Kernel command">
+<meta property="og:url" content="https://pwn.org.cn/2020/04/05/Linux-command/index.html">
+<meta property="og:site_name" content="Cooook&#39;s Blog">
+<meta property="og:description" content="Linux 下一些command的总结.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-10-22T11:16:45.844Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux Kernel command">
+<meta name="twitter:description" content="Linux 下一些command的总结.">
+  <link rel="canonical" href="https://pwn.org.cn/2020/04/05/Linux-command/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Linux Kernel command | Cooook's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cooook's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">不管是怎样的回忆，都是我们活过的人生。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/links/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>links</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://pwn.org.cn/2020/04/05/Linux-command/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cooook">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cooook's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Linux Kernel command
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-04-05 22:14:56" itemprop="dateCreated datePublished" datetime="2020-04-05T22:14:56+08:00">2020-04-05</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-22 19:16:45" itemprop="dateModified" datetime="2022-10-22T19:16:45+08:00">2022-10-22</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/学习笔记/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Linux 下一些command的总结.<br><a id="more"></a></p>
+<h1 id="0x01-gunzip"><a href="#0x01-gunzip" class="headerlink" title="0x01 gunzip"></a>0x01 gunzip</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gunzip [-acfhlLnNqrtvV][-s &lt;压缩字尾字符串&gt;][文件...] 或 gunzip [-acfhlLnNqrtvV][-s &lt;压缩字尾字符串&gt;][目录]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>-a或—ascii 　使用ASCII文字模式。</li>
+<li>-c或—stdout或—to-stdout 　把解压后的文件输出到标准输出设备。</li>
+<li>-f或-force 　强行解开压缩文件，不理会文件名称或硬连接是否存在以及该文件是否为符号连接。</li>
+<li>-h或—help 　在线帮助。</li>
+<li>-l或—list 　列出压缩文件的相关信息。</li>
+<li>-L或—license 　显示版本与版权信息。</li>
+<li>-n或—no-name 　解压缩时，若压缩文件内含有远来的文件名称及时间戳记，则将其忽略不予处理。</li>
+<li>-N或—name 　解压缩时，若压缩文件内含有原来的文件名称及时间戳记，则将其回存到解开的文件上。</li>
+<li>-q或—quiet 　不显示警告信息。</li>
+<li>-r或—recursive 　递归处理，将指定目录下的所有文件及子目录一并处理。</li>
+<li>-S&lt;压缩字尾字符串&gt;或—suffix&lt;压缩字尾字符串&gt; 　更改压缩字尾字符串。</li>
+<li>-t或—test 　测试压缩文件是否正确无误。</li>
+<li>-v或—verbose 　显示指令执行过程。</li>
+<li>-V或—version 显示版本信息。<h1 id="0x02-cpio"><a href="#0x02-cpio" class="headerlink" title="0x02 cpio"></a>0x02 cpio</h1>… 这也太长了点吧..  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cpio [-0aABckLovV][-C &lt;输入/输出大小&gt;][-F &lt;备份档&gt;][-H &lt;备份格式&gt;][-O &lt;备份档&gt;][--block-size=&lt;区块大小&gt;][--force-local][--help][--quiet][--version] 或 cpio [-bBcdfikmnrsStuvV][-C &lt;输入/输出大小&gt;][-E &lt;范本文件&gt;][-F &lt;备份档&gt;][-H &lt;备份格式&gt;][-I &lt;备份档&gt;][-M &lt;回传信息&gt;][-R &lt;拥有者&gt;&lt;:/.&gt;&lt;所属群组&gt;][--block-size=&lt;区块大小&gt;][--force-local][--help][--no-absolute-filenames][--no-preserve-owner][--only-verify-crc][--quiet][--sparse][--version][范本样式...] 或 cpio [-0adkiLmpuvV][-R &lt;拥有者&gt;&lt;:/.&gt;&lt;所属群组&gt;][--help][--no-preserve-owner][--quiet][--sparse][--version][目的目]</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>找几个看起来有用的参数先记录一下, 以后有用到的再补.  </p>
+<ul>
+<li>-a或—reset-access-time 　重新设置文件的存取时间。</li>
+<li>-A或—append 　附加到已存在的备份档中，且这个备份档必须存放在磁盘上，而不能放置于磁带机里。</li>
+<li>-B 　将输入/输出的区块大小改成5210 Bytes。</li>
+<li>-C&lt;区块大小&gt;或—io-size=&lt;区块大小&gt; 　设置输入/输出的区块大小，单位是Byte。</li>
+<li>-d或—make-directories 　如有需要cpio会自行建立目录。</li>
+<li>-f或—nonmatching 　让cpio解开所有不符合范本条件的文件。</li>
+<li>-F&lt;备份档&gt;或—file=&lt;备份档&gt; 　指定备份档的名称，用来取代标准输入或输出，也能借此通过网络使用另一台主机的保存设备存取备份档。</li>
+<li>-H&lt;备份格式&gt; 　指定备份时欲使用的文件格式。</li>
+<li>-i或—extract 　执行copy-in模式，还原备份档。</li>
+<li>-l&lt;备份档&gt; 　指定备份档的名称，用来取代标准输入，也能借此通过网络使用另一台主机的保存设备读取备份档。</li>
+<li>-L或—dereference 　不建立符号连接，直接复制该连接所指向的原始文件。</li>
+<li>-o或—create 　执行copy-out模式，建立备份档。</li>
+<li>-p或—pass-through 　执行copy-pass模式，略过备份步骤，直接将文件复制到目的目录。</li>
+<li>-u或—unconditional 　置换所有文件，不论日期时间的新旧与否，皆不予询问而直接覆盖。</li>
+<li>—force-local 　强制将备份档存放在本地主机。</li>
+<li>—block-size=&lt;区块大小&gt; 　设置输入/输出的区块大小，假如设置数值为5，则区块大小为2500，若设置成10，则区块大小为5120，依次类推。</li>
+</ul>
+<p>好多啊… </p>
+<h1 id="0x03-mount"><a href="#0x03-mount" class="headerlink" title="0x03 mount"></a>0x03 mount</h1><h2 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h2><p>mount 命令用来挂载文件系统。其基本命令格式为:<br><strong>mount -t type [-o options] device dir</strong></p>
+<ul>
+<li><strong>device</strong>:指定要挂载的设备，比如磁盘、光驱等。</li>
+<li><strong>dir</strong>:指定把文件系统挂载到哪个目录。</li>
+<li><strong>type</strong>: 指定挂载的文件系统类型，一般不用指定，mount 命令能够自行判断。</li>
+<li><strong>options</strong>: 指定挂载参数，比如 ro 表示以只读方式挂载文件系统。<h2 id="查看挂载的文件系统"><a href="#查看挂载的文件系统" class="headerlink" title="查看挂载的文件系统"></a>查看挂载的文件系统</h2></li>
+<li>mount </li>
+<li>mount -t tmpfs 只会输出tmpfs类型的文件系统.  <h2 id="格式化并挂载磁盘"><a href="#格式化并挂载磁盘" class="headerlink" title="格式化并挂载磁盘"></a>格式化并挂载磁盘</h2>对于一个磁盘分区，我们可以使用 mkfs 命令把磁盘分区格式化为指定的文件系统，比如 ext4：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkfs -t ext4 /dev/sdb1</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>然后挂载到/mnt目录:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount /dev/sdb1 /mnt</span><br></pre></td></tr></table></figure></p>
+<h2 id="挂载光驱"><a href="#挂载光驱" class="headerlink" title="挂载光驱"></a>挂载光驱</h2><p>挂载光驱的命令.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount /dev/cdrom /mnt</span><br></pre></td></tr></table></figure></p>
+<p>设置模式<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -o ro /dev/sdb1 /mnt</span><br></pre></td></tr></table></figure></p>
+<p>把只读的挂载重新挂载为读写模式<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount /mnt -o rw, remount</span><br></pre></td></tr></table></figure></p>
+<h2 id="挂载windows共享文件"><a href="#挂载windows共享文件" class="headerlink" title="挂载windows共享文件"></a>挂载windows共享文件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -t cifs -o username=nick,password=Test123456 //10.32.2.30/doc /mnt</span><br></pre></td></tr></table></figure>
+<p>注意，-t cifs 是可以省略的，mount 命令能够自动识别。一定要使用 IP 代替 windows 主机的名称。<br><strong>这个感觉可能挺实用.</strong></p>
+<h2 id="挂载虚拟文件系统"><a href="#挂载虚拟文件系统" class="headerlink" title="挂载虚拟文件系统"></a>挂载虚拟文件系统</h2><p>proc、tmpfs、sysfs、devpts 等都是 Linux 内核映射到用户空间的虚拟文件系统，它们不和具体的物理设备关联，但它们具有普通文件系统的特征，应用层程序可以像访问普通文件系统一样来访问他们。<br>比如内核的 proc 文件系统默认被挂载到了 /proc 目录，当然我们也可以再把它挂载到其它的目录，比如 /mnt 目录下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -t proc none /mnt</span><br></pre></td></tr></table></figure></p>
+<p>在 Linux 上我们还可以通过 tmpfs 文件系统轻松地构建出内存磁盘来。比如在内存中创建一个 512M 的 tmpfs 文件系统，并挂载到 /mnt 下，这样所有写到 /mnt 目录下的文件都存储在内存中，速度非常快，不过要注意，由于数据存储在内存中，所以断电后数据会丢失掉：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -t tmpfs -o size=512m tmpfs /mnt</span><br></pre></td></tr></table></figure></p>
+<p>感觉这个指令相当于是把内存当做磁盘来存了, 十分快, 不知道有什么用.  </p>
+<h2 id="挂载loop设备"><a href="#挂载loop设备" class="headerlink" title="挂载loop设备"></a>挂载loop设备</h2><p>这个不懂, 但是先总结上吧. </p>
+<p>在 Linux中，硬盘、光盘、软盘等都是常见的块设备，他们在 Linux 下的目录一般是 /dev/sda1、/dev/cdrom、 /dev/fd0 这样的。而 loop device 是虚拟的块设备，主要目的是让用户可以像访问上述块设备那样访问一个文件。 loop device 设备的路径一般是 /dev/loop0、dev/loop1 等，具体的个数跟内核的配置有关。<br><strong>挂载ISO文件</strong><br>需要用到 loop device 的最常见的场景是挂载一个 ISO 文件。比如将 /tmp/test.iso 这个光盘镜像文件使用 loop 模式挂载到 /mnt 下，这样就不需要把 ISO 文件刻录到光盘上了，当然也不需要光驱了。<br>下面的命令把 projects 目录下的内容打包到 test.iso 文件中：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkisofs -o test.iso projects/</span><br></pre></td></tr></table></figure></p>
+<p>挂载这个iso到/mnt目录下.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount test.iso /mnt</span><br></pre></td></tr></table></figure></p>
+<p>挂载test.iso文件使用了虚拟设备/dev/loop0, 并且是只读的模式。<br><strong>虚拟硬盘</strong><br>loop 设备另一种常见的用法是虚拟一个硬盘，比如我想玩儿一下 btrfs 这个文件系统，但系统中目前的所有分区都已经用了，里面都是有用的数据，不想格式化他们，这时虚拟硬盘就有用武之地了。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd <span class="keyword">if</span>=/dev/zero bs=1M count=512 of=./vdisk.img</span><br></pre></td></tr></table></figure></p>
+<p>然后在这个文件里面创建 btrfs 文件系统：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install btrfs-progs</span><br><span class="line">mkfs.btrfs vdisk.img</span><br></pre></td></tr></table></figure></p>
+<p>最后把它挂载到/mnt:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount vdisk.img /mnt</span><br></pre></td></tr></table></figure></p>
+<h2 id="挂载一个设备到多个目录"><a href="#挂载一个设备到多个目录" class="headerlink" title="挂载一个设备到多个目录"></a>挂载一个设备到多个目录</h2><p>我们也可以把同一个设备挂载到不同的目录，这样在不同的目录中看到的是同样的内容。还可以在不同的目录中控制挂载的权限，比如以只读方式挂载：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -o ro vdisk.img ./testdir</span><br></pre></td></tr></table></figure></p>
+<h1 id="0x04-chown"><a href="#0x04-chown" class="headerlink" title="0x04 chown"></a>0x04 chown</h1><p><strong>使用权限 : root</strong><br><strong>语法</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown [-cfhvR] [--<span class="built_in">help</span>] [--version] user[:group] file...</span><br></pre></td></tr></table></figure></p>
+<p>参数 :</p>
+<ul>
+<li>user: 新的文件拥有者的使用者 ID</li>
+<li>group : 新的文件拥有者的使用者组(group)</li>
+<li>-c : 显示更改的部分的信息</li>
+<li>-f : 忽略错误信息</li>
+<li>-h :修复符号链接</li>
+<li>-v : 显示详细的处理信息</li>
+<li>-R : 处理指定目录以及其子目录下的所有文件</li>
+</ul>
+<h1 id="0x05-exec"><a href="#0x05-exec" class="headerlink" title="0x05 exec"></a>0x05 exec</h1><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">exec命令</th>
+<th style="text-align:center">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">exec ls</td>
+<td style="text-align:center">在shell中执行ls，ls结束后不返回原来的shell中了</td>
+</tr>
+<tr>
+<td style="text-align:center">exec &lt; file</td>
+<td style="text-align:center">file中的内容作为标准输入（替代STDIN）</td>
+</tr>
+<tr>
+<td style="text-align:center">exec &gt;file</td>
+<td style="text-align:center">将标准输出写入file（替代STDOUT）</td>
+</tr>
+<tr>
+<td style="text-align:center">exec 3 &lt; file</td>
+<td style="text-align:center">将file读入到文件描述符3中（此时，创建了文件描述符3）</td>
+</tr>
+<tr>
+<td style="text-align:center">sort &lt;&amp;3</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>将文件描述符3作为临时输入，用于sort排序|<br>|exec 4&gt;file|将写入文件描述符4中的内容写入file中（此时，创建了文件描述符4）|<br>|ls &gt;&amp;4|ls将不会有显示，直接写入文件描述符4中了，即上面的file中|<br>|exec 5&lt;&amp;4|创建文件描述符4的拷贝文件描述符5|<br>|exec 3&lt;&amp;-|关闭文件描述符3|</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Linux-Kernel/" rel="tag"># Linux Kernel</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2020/04/03/easy-heap/" rel="next" title="LCTF2018 PWN easy_heap">
+                  <i class="fa fa-chevron-left"></i> LCTF2018 PWN easy_heap
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2020/04/06/Linux-fork/" rel="prev" title="Linux-fork">
+                  Linux-fork <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-gunzip"><span class="nav-number">1.</span> <span class="nav-text">0x01 gunzip</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-cpio"><span class="nav-number">2.</span> <span class="nav-text">0x02 cpio</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-mount"><span class="nav-number">3.</span> <span class="nav-text">0x03 mount</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本使用"><span class="nav-number">3.1.</span> <span class="nav-text">基本使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看挂载的文件系统"><span class="nav-number">3.2.</span> <span class="nav-text">查看挂载的文件系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#格式化并挂载磁盘"><span class="nav-number">3.3.</span> <span class="nav-text">格式化并挂载磁盘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#挂载光驱"><span class="nav-number">3.4.</span> <span class="nav-text">挂载光驱</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#挂载windows共享文件"><span class="nav-number">3.5.</span> <span class="nav-text">挂载windows共享文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#挂载虚拟文件系统"><span class="nav-number">3.6.</span> <span class="nav-text">挂载虚拟文件系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#挂载loop设备"><span class="nav-number">3.7.</span> <span class="nav-text">挂载loop设备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#挂载一个设备到多个目录"><span class="nav-number">3.8.</span> <span class="nav-text">挂载一个设备到多个目录</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-chown"><span class="nav-number">4.</span> <span class="nav-text">0x04 chown</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x05-exec"><span class="nav-number">5.</span> <span class="nav-text">0x05 exec</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg"
+      alt="Cooook">
+  <p class="site-author-name" itemprop="name">Cooook</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cooook</span>
+</div>
+  <div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+</body>
+</html>

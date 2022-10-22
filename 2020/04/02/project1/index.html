@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/pikaqiu.ico?v=7.4.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="datastructure project1">
+<meta name="keywords" content="数据结构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构project1">
+<meta property="og:url" content="https://pwn.org.cn/2020/04/02/project1/index.html">
+<meta property="og:site_name" content="Cooook&#39;s Blog">
+<meta property="og:description" content="datastructure project1">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2020/03/31/pZPHNo5u8cMWUDK.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/31/te1FhdxJuzEqfOB.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/31/CivxAZmyX31VcHB.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/31/VgdcltTCAU62uai.png">
+<meta property="og:updated_time" content="2022-10-22T11:16:45.848Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据结构project1">
+<meta name="twitter:description" content="datastructure project1">
+<meta name="twitter:image" content="https://i.loli.net/2020/03/31/pZPHNo5u8cMWUDK.png">
+  <link rel="canonical" href="https://pwn.org.cn/2020/04/02/project1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>数据结构project1 | Cooook's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cooook's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">不管是怎样的回忆，都是我们活过的人生。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/links/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>links</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://pwn.org.cn/2020/04/02/project1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cooook">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cooook's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">数据结构project1
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-04-02 16:45:34" itemprop="dateCreated datePublished" datetime="2020-04-02T16:45:34+08:00">2020-04-02</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-22 19:16:45" itemprop="dateModified" datetime="2022-10-22T19:16:45+08:00">2022-10-22</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/project论文/" itemprop="url" rel="index"><span itemprop="name">project论文</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>datastructure project1<br><a id="more"></a></p>
+<center><font size="10"> Finding the maximum submatrix </font></center>
+<center><font size="5"> Date: 2020-3-25   </font> </center>
+
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>&emsp; Given an N*N matrix, find the maximum submatrix. If all the integers are negative, the maximum sum will be 0.This problem can be seen as the expansion of the Maximum Subsequence Sum problem in the textbook.</p>
+<h1 id="Algorithm-Specification"><a href="#Algorithm-Specification" class="headerlink" title="Algorithm Specification"></a>Algorithm Specification</h1><p><strong>We have three solutions to this problem.</strong></p>
+<ul>
+<li>$O(N^6)$</li>
+<li>$O(N^4)$</li>
+<li>$O(N^3)$</li>
+</ul>
+<p><strong>Algorithm1</strong><br>&emsp;It’s the simplest solution, we just need to enumerate every submatrix and calculate the sum of every submatrix.<br><strong>Fuction Solver</strong><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ix in <span class="number">1.</span>..n</span><br><span class="line">    <span class="keyword">for</span> jx in <span class="number">1.</span>..ix</span><br><span class="line">        <span class="keyword">for</span> iy in <span class="number">1.</span>..n</span><br><span class="line">            <span class="keyword">for</span> jy in <span class="number">1.</span>..iy</span><br><span class="line">                <span class="function"><span class="keyword">if</span> <span class="title">Sum</span><span class="params">(jx, jy, ix, iy)</span> &gt; Ans</span></span><br><span class="line"><span class="function">                    Ans </span>= Sum(jx, jy, ix, iy);</span><br></pre></td></tr></table></figure></p>
+<p><strong>Fuction Sum</strong><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i in jx...ix</span><br><span class="line">    <span class="keyword">for</span> j in jy...iy</span><br><span class="line">        Ans += a[i][j];</span><br></pre></td></tr></table></figure></p>
+<p><strong>Algorithm2</strong><br>&emsp; We can easily find that we can use a 2-dimension array to represent the Sum of a submatrix.<br>&emsp; We define $Sum[x][y] = \sum<em>{i=1}^{x}\sum</em>{j=1}^{y}a[i][j]$<br>&emsp; The following pseudo-code can help you understand how to calculate it.<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i in <span class="number">1.</span>..n</span><br><span class="line">    <span class="keyword">for</span> j in <span class="number">1.</span>..n</span><br><span class="line">        Sum[i][j] = Sum[i][j - <span class="number">1</span>] + a[i][j];</span><br><span class="line"><span class="keyword">for</span> i in <span class="number">2.</span>..n</span><br><span class="line">    <span class="keyword">for</span> j in <span class="number">1.</span>..n</span><br><span class="line">        Sum[i][j] += Sum[i - <span class="number">1</span>][j];</span><br></pre></td></tr></table></figure></p>
+<p><strong>Then we get a new Sum fuction.</strong><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> Sum[ix][iy] + Sum[jx - <span class="number">1</span>][jy - <span class="number">1</span>] - Sum[jx - <span class="number">1</span>][iy] - Sum[ix][jy - <span class="number">1</span>];</span><br></pre></td></tr></table></figure></p>
+<p>&emsp; Then you can use Fuction Solver to calculate the answer.<br><strong>Algorithm3</strong><br>&emsp; A submatrix have four borders, they are upper and lower ones of a row and left and right ones of the column. Then, we can enumerate the left and right borders of the column, relating it to the Maximum Subsequence Sum problem in the textbook.<br>&emsp; We define $Sum[x][y] = \sum_{j=1}^{y}Sum[x][j]$<br>&emsp; We can calculate it as follow.<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i in <span class="number">1.</span>..n</span><br><span class="line">    <span class="keyword">for</span> j in <span class="number">1.</span>..n</span><br><span class="line">        Sum[i][j] = Sum[i][j - <span class="number">1</span>] + a[i][j];</span><br></pre></td></tr></table></figure></p>
+<p>&emsp; Then if we choose column $i$ and $j$ $( i &lt; j )$, we can let $val[x]= Sum[x][j] - Sum[x][i - 1]$ and use the solution for Subsequence Sum problem.  </p>
+<h1 id="Testing-Results"><a href="#Testing-Results" class="headerlink" title="Testing Results"></a>Testing Results</h1><p>Case 1:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">10</span><br><span class="line">-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 </span><br><span class="line">-1 -1  1  1  1  1  1  1  1  1 </span><br><span class="line">-1 -1  1  1  1  1  1  1  1  1 </span><br><span class="line">-1 -1  1  1  1  1  1  1  1  1 </span><br><span class="line">-1 -1  1  1  1  1  1  1  1  1 </span><br><span class="line">-1 -1  1  1  1  1  1  1  1  1 </span><br><span class="line">-1 -1  1  1  1  1  1  1  1  1 </span><br><span class="line">-1 -1  1  1  1  1  1  1  1  1 </span><br><span class="line">-1 -1  1  1  1  1  1  1  1  1 </span><br><span class="line">-1 -1  1  1  1  1  1  1  1  1</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;This case is to test if algorithm2 can calculate the sum of a submatrix rightly.<br>&emsp;The right answer is 72.<br>&emsp;Program output is 72.<br>&emsp;Status: Pass. </p>
+<p>Case 2:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">5 </span><br><span class="line">-1 -1 -1 -1 -1</span><br><span class="line">-1 -1 -1 -1 -1</span><br><span class="line">-1 -1 -1 -1 -1</span><br><span class="line">-1 -1 -1 -1 -1</span><br><span class="line">-1 -1 -1 -1 -1</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;This case is to test if program can correctly handle all negtive numbers cases.<br>&emsp;The right answer is 0.<br>&emsp;Program output is 0.<br>&emsp;Status: Pass. </p>
+<h1 id="Analysis-and-Comments"><a href="#Analysis-and-Comments" class="headerlink" title="Analysis and Comments"></a>Analysis and Comments</h1><p>&emsp;To enumerate a point, we need to enumerate x and y, x from $1$ to $n$ and y from $1$ to $n$. So, the time complexity of enumerating a point is $O(N^2)$.<br><strong>Algorithm1</strong><br>&emsp;<strong>Time complexity</strong>:For algorithm1, we need to enumerate two points to determine a submatrix, and the time complexity is $O(N ^ 4)$.And the calculation of the sum of this submatrix is $O(N^2)$. Thus, this algorithm’s time complexity is $O(N^6)$.<br>&emsp;<strong>Space complexity</strong>:In algorithm1, we use a $n\times n$ array $a[x][y]$ to store matrix. Thus, the space complexity of this algorithm is $O(N^2)$.<br><strong>Algorithm2</strong><br>&emsp;<strong>Time complexity</strong>:For algorithm2, we still need to enumerate two points, but we can know the sum of the submatrix in $O(1)$.The time complexity of enumerating two points is $O(N^4)$, and calculate $Sum$ array need $O(N^2)$. Finally, the time complexity of algorithm2 is $O(N^4)$.<br>&emsp;<strong>Space complexity</strong>:For algorithm2, we use two $n \times n$ array $a[x][y], Sum[x][y]$. The space complexity of algorithm2 is $O(N^2)$.<br><strong>Algorithm3</strong><br>&emsp;<strong>Time complexity</strong>:In algorithm3, we need to enumerate two columns, the complexity of that is $O(N^2)$, and for each of that, we will do an $O(n)$ algorithm to solve the Maximum Subsequence Sum problem. The time complexity of calculating $Sum[x][y]$ is $O(N^2)$.Thus the time complexity of algorithm3 is $O(N^3)$.<br>&emsp;<strong>Space complexity</strong>:In algorithm3, we use two $n\times n$ array $Sum[x][y], a[x][y]$. Thus, the space complexity of algorithm3 is $O(N^2)$.<br><strong>The comparasion of the three algorithms</strong><br>&emsp;The O(N^6) algorithm has to calculate the summary of every submatrix repeatedly. In comprison, the O(N^4) algorithm just calculates part of them,and then do some simple on work, which can save a lot of time.<br>&emsp;The O(N^3) algorithm look to transfer the two-dimensional problem into an one-dimensional one, with the sum of each coloum put into a single cell of an one-dimensional array.Then we can find that all we have to do is to scan such an array for once, just like what we did to the problem in the textbook in the easiest way.This algorithm is apparently smarter than the ones before, as it avoid some unnecessary work.  </p>
+<p><strong>PS:NULL represent the time needed is too long to record.</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">algorithm1</th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">N</td>
+<td style="text-align:center">$5$</td>
+<td style="text-align:center">$10$</td>
+<td style="text-align:center">$30$</td>
+<td style="text-align:center">$50$</td>
+<td style="text-align:center">$80$</td>
+<td style="text-align:center">$100$</td>
+</tr>
+<tr>
+<td style="text-align:center">K</td>
+<td style="text-align:center">$100000$</td>
+<td style="text-align:center">$1000$</td>
+<td style="text-align:center">$1$</td>
+<td style="text-align:center">$1$</td>
+<td style="text-align:center">$1$</td>
+<td style="text-align:center">$1$</td>
+</tr>
+<tr>
+<td style="text-align:center">Ticks</td>
+<td style="text-align:center">$1480$</td>
+<td style="text-align:center">$462$</td>
+<td style="text-align:center">$114$</td>
+<td style="text-align:center">$3216$</td>
+<td style="text-align:center">$21076$</td>
+<td style="text-align:center">$51456$</td>
+</tr>
+<tr>
+<td style="text-align:center">Total Time</td>
+<td style="text-align:center">$1.48$</td>
+<td style="text-align:center">$0.462$</td>
+<td style="text-align:center">$0.114$</td>
+<td style="text-align:center">$3.216$</td>
+<td style="text-align:center">$21.076$</td>
+<td style="text-align:center">$51.456$</td>
+</tr>
+<tr>
+<td style="text-align:center">Duration</td>
+<td style="text-align:center">$1.48e-5$</td>
+<td style="text-align:center">$4.62e-4$</td>
+<td style="text-align:center">$0.114$</td>
+<td style="text-align:center">$3.216$</td>
+<td style="text-align:center">$21.076$</td>
+<td style="text-align:center">$51.456$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">algorithm2</th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">N</td>
+<td style="text-align:center">$5$</td>
+<td style="text-align:center">$10$</td>
+<td style="text-align:center">$30$</td>
+<td style="text-align:center">$50$</td>
+<td style="text-align:center">$80$</td>
+<td style="text-align:center">$100$</td>
+</tr>
+<tr>
+<td style="text-align:center">K</td>
+<td style="text-align:center">$10000$</td>
+<td style="text-align:center">$10000$</td>
+<td style="text-align:center">$1000$</td>
+<td style="text-align:center">$500$</td>
+<td style="text-align:center">$100$</td>
+<td style="text-align:center">$50$</td>
+</tr>
+<tr>
+<td style="text-align:center">Ticks</td>
+<td style="text-align:center">$17$</td>
+<td style="text-align:center">$211$</td>
+<td style="text-align:center">$1092$</td>
+<td style="text-align:center">$4235$</td>
+<td style="text-align:center">$5315$</td>
+<td style="text-align:center">$6095$</td>
+</tr>
+<tr>
+<td style="text-align:center">Total Time</td>
+<td style="text-align:center">$1.7e-2$</td>
+<td style="text-align:center">$2.11e-1$</td>
+<td style="text-align:center">$1.092$</td>
+<td style="text-align:center">$4.235$</td>
+<td style="text-align:center">$5.315$</td>
+<td style="text-align:center">$6.095$</td>
+</tr>
+<tr>
+<td style="text-align:center">Duration</td>
+<td style="text-align:center">$1.7e-6$</td>
+<td style="text-align:center">$2.11e-5$</td>
+<td style="text-align:center">$1.09e-3$</td>
+<td style="text-align:center">$8.47e-3$</td>
+<td style="text-align:center">$5.32e-2$</td>
+<td style="text-align:center">$0.1219$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">algorithm3</th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">N</td>
+<td style="text-align:center">$5$</td>
+<td style="text-align:center">$10$</td>
+<td style="text-align:center">$30$</td>
+<td style="text-align:center">$50$</td>
+<td style="text-align:center">$80$</td>
+<td style="text-align:center">$100$</td>
+</tr>
+<tr>
+<td style="text-align:center">K</td>
+<td style="text-align:center">$100000$</td>
+<td style="text-align:center">$100000$</td>
+<td style="text-align:center">$1000$</td>
+<td style="text-align:center">$200$</td>
+<td style="text-align:center">$200$</td>
+<td style="text-align:center">$100$</td>
+</tr>
+<tr>
+<td style="text-align:center">Ticks</td>
+<td style="text-align:center">$75$</td>
+<td style="text-align:center">$459$</td>
+<td style="text-align:center">$81$</td>
+<td style="text-align:center">$77$</td>
+<td style="text-align:center">$331$</td>
+<td style="text-align:center">$260$</td>
+</tr>
+<tr>
+<td style="text-align:center">Total Time</td>
+<td style="text-align:center">$7.5e-2$</td>
+<td style="text-align:center">$4.59e-1$</td>
+<td style="text-align:center">$8.1e-2$</td>
+<td style="text-align:center">$7.7e-2$</td>
+<td style="text-align:center">$3.31e-1$</td>
+<td style="text-align:center">$2.6e-1$</td>
+</tr>
+<tr>
+<td style="text-align:center">Duration</td>
+<td style="text-align:center">$7.5e-7$</td>
+<td style="text-align:center">$4.59e-6$</td>
+<td style="text-align:center">$8.10e-5$</td>
+<td style="text-align:center">$3.85e-4$</td>
+<td style="text-align:center">$1.66e-3$</td>
+<td style="text-align:center">$2.6e-3$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><img src="https://i.loli.net/2020/03/31/pZPHNo5u8cMWUDK.png" alt="整体比较.png"><br><img src="https://i.loli.net/2020/03/31/te1FhdxJuzEqfOB.png" alt="n3.png"><br><img src="https://i.loli.net/2020/03/31/CivxAZmyX31VcHB.png" alt="n4.png"><br><img src="https://i.loli.net/2020/03/31/VgdcltTCAU62uai.png" alt="n6.png"></p>
+<p><strong>Declaration</strong><br>&emsp;<b><em>We hereby declare that all the work done in this project titled<br>“Finding the maximum submatrix” is of our independent effort as a group.</em></b></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/数据结构/" rel="tag"># 数据结构</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2020/04/02/project2/" rel="next" title="数据结构project2">
+                  <i class="fa fa-chevron-left"></i> 数据结构project2
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2020/04/03/easy-heap/" rel="prev" title="LCTF2018 PWN easy_heap">
+                  LCTF2018 PWN easy_heap <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Algorithm-Specification"><span class="nav-number">2.</span> <span class="nav-text">Algorithm Specification</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Testing-Results"><span class="nav-number">3.</span> <span class="nav-text">Testing Results</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Analysis-and-Comments"><span class="nav-number">4.</span> <span class="nav-text">Analysis and Comments</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg"
+      alt="Cooook">
+  <p class="site-author-name" itemprop="name">Cooook</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cooook</span>
+</div>
+  <div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+</body>
+</html>

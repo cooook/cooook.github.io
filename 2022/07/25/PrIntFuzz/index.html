@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/pikaqiu.ico?v=7.4.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="paper阅读笔记">
+<meta name="keywords" content="fuzzing,emulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PrIntFuzz Fuzzing Linux Drivers via Automated Virtual Device Simulation">
+<meta property="og:url" content="https://pwn.org.cn/2022/07/25/PrIntFuzz/index.html">
+<meta property="og:site_name" content="Cooook&#39;s Blog">
+<meta property="og:description" content="paper阅读笔记">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-10-22T11:16:45.848Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PrIntFuzz Fuzzing Linux Drivers via Automated Virtual Device Simulation">
+<meta name="twitter:description" content="paper阅读笔记">
+  <link rel="canonical" href="https://pwn.org.cn/2022/07/25/PrIntFuzz/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>PrIntFuzz Fuzzing Linux Drivers via Automated Virtual Device Simulation | Cooook's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cooook's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">不管是怎样的回忆，都是我们活过的人生。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/links/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>links</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://pwn.org.cn/2022/07/25/PrIntFuzz/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cooook">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cooook's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">PrIntFuzz Fuzzing Linux Drivers via Automated Virtual Device Simulation
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2022-07-25 16:45:34" itemprop="dateCreated datePublished" datetime="2022-07-25T16:45:34+08:00">2022-07-25</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-22 19:16:45" itemprop="dateModified" datetime="2022-10-22T19:16:45+08:00">2022-10-22</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/论文/" itemprop="url" rel="index"><span itemprop="name">论文</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>paper阅读笔记<br><a id="more"></a></p>
+<h2 id="motivation"><a href="#motivation" class="headerlink" title="motivation"></a>motivation</h2><p>Linux很多驱动并没有经过大量的测试，很多安全漏洞都是出现在设备驱动中，但是现存的fuzzing方案要么需要真实设备的支持使得驱动并不能大规模的测试，要么基于模拟，但是现存的模拟方法基于人工并且覆盖的函数并不多，也不能大规模用于测试。作者在此提出一种自动化模拟的方法。</p>
+<h2 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h2><h3 id="Linux-Fuzz-Method"><a href="#Linux-Fuzz-Method" class="headerlink" title="Linux Fuzz Method"></a>Linux Fuzz Method</h3><ul>
+<li>SyzVegas uses multi-armed-bandit algorithms to adapt the task selection and seed selection algorithms in Syzkaller, improving the performance of Syzkaller. </li>
+<li>HEALER [41] utilizes system call relation learning to improve the effectiveness of fuzzing. </li>
+<li>kAFL [36] uses Intel-PT to collect coverage from the processor and performs coverage-guided fuzzing. </li>
+<li>HFL [18] combines fuzzing with symbolic execution for hybrid kernel fuzzing.</li>
+<li>IMF [10] discovers deep kernel bugs by leveraging inferred dependence model between kernel API functions. </li>
+<li>MoonShine [27] performs static analysis to detect dependencies between system calls and collects system call traces from real-world programs for distilling seeds. </li>
+<li>Digtool [30] designs a hypervisor to catch kernel behaviors dynamically and leverages logs to discover kernel vulnerabilities. </li>
+<li>NTFuzz [5] utilizes static binary analysis to infer the system call types and performs type- aware fuzzing on Windows.  <h3 id="Linux-SA-amp-SE-Method"><a href="#Linux-SA-amp-SE-Method" class="headerlink" title="Linux SA &amp; SE Method"></a>Linux SA &amp; SE Method</h3></li>
+<li>SADA [3] recognizes both unsafe streaming DMA access and coherent DMA access in device drivers. </li>
+<li>DCUAF [2] takes a local-global analysis to extract function pairs that may be executed concurrently and performs a lockset analysis to detect concurrent use-after-free bugs. (并发相关问题)</li>
+<li>DSAC [4] uses a heuristics-based method to extract func- tions that may be sleeping at runtime to detect sleep-in-atomic- context bugs. </li>
+<li>HERO [48] finds disordered error handling bugs by pairing error-handling functions based on their unique structures. </li>
+<li>EECATCH [28] can detect exaggerated error handling bugs, which are wrong error handling consequences worse than the error it- self. </li>
+<li>CRIX [21] is designed to detect missing-check bugs in drivers. </li>
+<li>DR.CHECKER [22] performs a soundy static analysis to find bugs with pointer analysis and taint analysis. However, static analysis has its shortcomings. First, manual analysis is needed to determine whether bugs reported by the tool are actual bugs. Second, static analysis is usually heuristics-based, so the manual effort is also needed to formulate rules for a specific type of bug.</li>
+<li>SymDrive [35] removes the need for hardware via symbolic execution. However, besides the common problems of symbolic execution, SymDrive also requires manual annotation of the driver code and manual configuration.<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><h3 id="Virtual-Device-Modeling"><a href="#Virtual-Device-Modeling" class="headerlink" title="Virtual Device Modeling"></a>Virtual Device Modeling</h3>设备在开始和用户态程序交互之前需要进行初始化，初始化过程中会检查硬件是否完好，对设备的模拟需要先满足初始化的过程。<h4 id="Data-Space-Modeling"><a href="#Data-Space-Modeling" class="headerlink" title="Data Space Modeling"></a>Data Space Modeling</h4>在初始化过程中设备驱动将从设备寄存器中读取数据并且进行约束判断。<br>作者对该类问题的解决方法为先启发式静态分析找出该驱动中的read类函数，然后进行数据流分析进行约束求解<br>作者判断read类函数的方法为先找出Linux中提供的read API，然后判断设备中是否提供了对Linux中提供API的wrapper函数，作者对wrapper函数的分析如下</li>
+<li>The function name contains “read”.</li>
+<li>The number of basic blocks of the function is less than five.</li>
+<li>The function calls the built-in functions capable of reading.</li>
+</ul>
+<p>分析出read函数之后对read函数读出的值进行Def-Use分析，但是并不是所有的约束都需要满足，需要对后续的程序控制流进一步分析来判断该约束是否要满足</p>
+<h4 id="I-O-and-Memory-Space-Modeling"><a href="#I-O-and-Memory-Space-Modeling" class="headerlink" title="I/O and Memory Space Modeling"></a>I/O and Memory Space Modeling</h4><p>每个PCI设备最多实现6个PCI地址区域，驱动会对对应的类型进行判断<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!(pci_resource_flags(dev, <span class="number">0</span>) &amp; IORESOURCE_IO)) </span><br><span class="line">    <span class="keyword">return</span> -ENODEV;</span><br></pre></td></tr></table></figure></p>
+<p>PrIntFuzz 首先定位相关的宏或者函数，然后提取对应区域和对应资源的类型来绕过检测，然后PrIntFuzz会记录这个区域的位置和对应的资源类型</p>
+<h4 id="Configuration-Space-Modeling"><a href="#Configuration-Space-Modeling" class="headerlink" title="Configuration Space Modeling"></a>Configuration Space Modeling</h4><p>PCI devices contain several con- figuration registers that hold configuration information about the hardware, and drivers can read or write to these registers<br>Among these configuration registers, five standard registers are critical: vendorID, deviceID, class, subsystem vendorID, and subsystem deviceID. These registers are read by the PCI bus when scanning for devices to determine which driver this hardware should match. Correspondingly, on the driver side, the pci_device_id structure is provided to define the list of different types of devices supported by this driver [25], as shown in Listing 3.<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pci_device_id</span> &#123;</span></span><br><span class="line">    __u32 vendor, device; <span class="comment">/* Vendor and device ID or PCI_ANY_ID*/</span> </span><br><span class="line">    __u32 subvendor, subdevice; <span class="comment">/* Subsystem ID's or PCI_ANY_ID */</span> </span><br><span class="line">    __u32 <span class="class"><span class="keyword">class</span>, <span class="title">class_mask</span>;</span> <span class="comment">/* (class,subclass,prog-if) triplet */</span> </span><br><span class="line">    <span class="keyword">kernel_ulong_t</span> driver_data; <span class="comment">/* Data private to the driver */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>pci_device_id是pci_driver的field，作者进行了field-sensitive分析来定位pci_driver和pci_device_id<br>除了上述的标准寄存器，还会对其他特殊的寄存器进行检验<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pci_read_config_dword(pdev, <span class="number">0x80</span>, &amp;reg);</span><br><span class="line"><span class="keyword">if</span> (reg != ADM8211_SIG1 &amp;&amp; reg != ADM8211_SIG2) &#123;</span><br><span class="line">    printk(<span class="string">"%s : Invalid signature (0x%x)\n"</span>, pci_name(pdev), reg); </span><br><span class="line">    err = -EINVAL;</span><br><span class="line">    <span class="keyword">goto</span> err_disable_pdev;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对于这些检验，PrIntFuzz先提取了对应的函数，然后采用了Data Space Modeling类似的方法来处理</p>
+<h3 id="System-Call-Templates-Generation"><a href="#System-Call-Templates-Generation" class="headerlink" title="System Call Templates Generation"></a>System Call Templates Generation</h3>
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/fuzzing/" rel="tag"># fuzzing</a>
+            
+              <a href="/tags/emulation/" rel="tag"># emulation</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2022/07/13/ReverseCpp/" rel="next" title="C++逆向与ghidra脚本">
+                  <i class="fa fa-chevron-left"></i> C++逆向与ghidra脚本
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2022/07/28/can/" rel="prev" title="can">
+                  can <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#motivation"><span class="nav-number">1.</span> <span class="nav-text">motivation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Related-Work"><span class="nav-number">2.</span> <span class="nav-text">Related Work</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-Fuzz-Method"><span class="nav-number">2.1.</span> <span class="nav-text">Linux Fuzz Method</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-SA-amp-SE-Method"><span class="nav-number">2.2.</span> <span class="nav-text">Linux SA &amp; SE Method</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Solution"><span class="nav-number">3.</span> <span class="nav-text">Solution</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Virtual-Device-Modeling"><span class="nav-number">3.1.</span> <span class="nav-text">Virtual Device Modeling</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Data-Space-Modeling"><span class="nav-number">3.1.1.</span> <span class="nav-text">Data Space Modeling</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O-and-Memory-Space-Modeling"><span class="nav-number">3.1.2.</span> <span class="nav-text">I/O and Memory Space Modeling</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Configuration-Space-Modeling"><span class="nav-number">3.1.3.</span> <span class="nav-text">Configuration Space Modeling</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#System-Call-Templates-Generation"><span class="nav-number">3.2.</span> <span class="nav-text">System Call Templates Generation</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg"
+      alt="Cooook">
+  <p class="site-author-name" itemprop="name">Cooook</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cooook</span>
+</div>
+  <div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+</body>
+</html>

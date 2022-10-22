@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/pikaqiu.ico?v=7.4.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="堆学习笔记">
+<meta name="keywords" content="堆">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Heap">
+<meta property="og:url" content="https://pwn.org.cn/2020/01/27/Heap/index.html">
+<meta property="og:site_name" content="Cooook&#39;s Blog">
+<meta property="og:description" content="堆学习笔记">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://p3.ssl.qhimg.com/t01c7befb0f2d9d7928.png">
+<meta property="og:image" content="https://p4.ssl.qhimg.com/t01310bfbfd1e2a7681.png">
+<meta property="og:image" content="https://i.loli.net/2020/01/27/2fGpFrPk4juWvhe.png">
+<meta property="og:image" content="https://i.loli.net/2020/01/27/RXnAFVOgw63lrcs.png">
+<meta property="og:image" content="https://p0.ssl.qhimg.com/t01ccb7d68ba4ee0888.png">
+<meta property="og:image" content="https://p4.ssl.qhimg.com/t01d4484ff4a16c0287.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01db644af1ec2f2297.png">
+<meta property="og:updated_time" content="2022-10-22T11:16:45.844Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Heap">
+<meta name="twitter:description" content="堆学习笔记">
+<meta name="twitter:image" content="https://p3.ssl.qhimg.com/t01c7befb0f2d9d7928.png">
+  <link rel="canonical" href="https://pwn.org.cn/2020/01/27/Heap/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Heap | Cooook's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cooook's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">不管是怎样的回忆，都是我们活过的人生。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/links/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>links</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://pwn.org.cn/2020/01/27/Heap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cooook">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cooook's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Heap
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-27 15:48:43" itemprop="dateCreated datePublished" datetime="2020-01-27T15:48:43+08:00">2020-01-27</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-22 19:16:45" itemprop="dateModified" datetime="2022-10-22T19:16:45+08:00">2022-10-22</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/学习笔记/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>堆学习笔记<br><a id="more"></a></p>
+<h1 id="glibc堆内存分配原理"><a href="#glibc堆内存分配原理" class="headerlink" title="glibc堆内存分配原理."></a>glibc堆内存分配原理.</h1><p>留坑待填</p>
+<h1 id="Use-After-Free"><a href="#Use-After-Free" class="headerlink" title="Use After Free"></a>Use After Free</h1><p>uaf漏洞主要原因是释放了一个堆块后, 并没有将该指针置为NULL, 再次malloc的时候可能会重新申请到这块内存, 如果被恶意构造数据就会被利用.<br>UAF源码, </p>
+<p><img src="https://p3.ssl.qhimg.com/t01c7befb0f2d9d7928.png" alt=""><br>输出<br><img src="https://p4.ssl.qhimg.com/t01310bfbfd1e2a7681.png" alt=""><br>可以看到c的地址和a的地址一样, 现在a的指针指向了”this is C!”  </p>
+<p>一段小代码</p>
+<pre><code class="lang-C++">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+typedef void (*func_ptr)(char *);
+void evil_fuc(char command[])
+{
+    system(command);
+}
+void echo(char content[])
+{
+    printf(&quot;%s&quot;,content);
+}
+int main()
+{
+    func_ptr *p1=(int*)malloc(4*sizeof(int));
+    printf(&quot;malloc addr: %pn&quot;,p1);
+    p1[3]=echo;
+    p1[3](&quot;hello worldn&quot;);
+    free(p1); //在这里free了p1,但并未将p1置空,导致后续可以再使用p1指针
+    p1[3](&quot;hello againn&quot;); //p1指针未被置空,虽然free了,但仍可使用.
+    func_ptr *p2=(int*)malloc(4*sizeof(int));//malloc在free一块内存后,再次申请同样大小的指针会把刚刚释放的内存分配出来.
+    printf(&quot;malloc addr: %pn&quot;,p2);
+    printf(&quot;malloc addr: %pn&quot;,p1);//p2与p1指针指向的内存为同一地址
+    p2[3]=evil_fuc; //在这里将p1指针里面保存的echo函数指针覆盖成为了evil_func指针.
+    p1[3](&quot;whoami&quot;);
+    return 0;
+}
+</code></pre>
+<p>在这里, p1被free掉了, 但是p2 malloc出来的内存的地址和p1是一样的, 这时候调用p1[3]就相当于调用了p2[3].  </p>
+<h1 id="Double-Free-漏洞"><a href="#Double-Free-漏洞" class="headerlink" title="Double Free 漏洞"></a>Double Free 漏洞</h1><p>C中free有个漏洞, 判断一块内存有没有被free过是直接和链表顶端的节点比较, 如果不是的话, 则可以free.<br>那么就存在这样一个漏洞.  </p>
+<pre><code class="lang-C">char *a = malloc(8);
+char *b = malloc(8);
+free(a);
+free(b);
+free(a);
+
+char *d = malloc(8);
+char *e = malloc(8);
+</code></pre>
+<p>这时, a这块内存被free了两次.<br>且d == a.<br>chunk在free时和分配给用户时不同的格式.<br><img src="https://i.loli.net/2020/01/27/2fGpFrPk4juWvhe.png" alt="QQ截图20200127095800.png"><br>这为分配给用户之后的chunk, P代表前一个是否被使用, P = 0表示前一个空闲, 这时prev_size才有效, 可以用prev_size找到前一个chunk的开始地址.<br>M代表当前chunk从那个内存区域获得的虚拟内存, M=1表示从mmap映射区域, 否则从heap区域分配.<br>A代表是不是非主分配区, A=1贼属于非主分配区.<br><img src="https://i.loli.net/2020/01/27/RXnAFVOgw63lrcs.png" alt="QQ截图20200127095818.png"><br>这是free chunk的结构, fd是下一个chunk, bk是上一个chunk.<br><img src="https://p0.ssl.qhimg.com/t01ccb7d68ba4ee0888.png" alt=""><br><img src="https://p4.ssl.qhimg.com/t01d4484ff4a16c0287.png" alt=""><br>那么上面这个例子, 修改d的时候, 相当于修改了fd, <em> d = (char </em>)(&amp;stack - sizeof(d))<br>相当于把stack这个变量放到了size of chunk 这个位置, 减size of d 的原因是要把size of prev chunk 这个位置空出来, 0x20 是size of chunk的值, 这样我们下一次malloc的时候, 可以得到&amp;stack + 8.  </p>
+<h1 id="Unlink漏洞"><a href="#Unlink漏洞" class="headerlink" title="Unlink漏洞"></a>Unlink漏洞</h1><p><img src="https://p1.ssl.qhimg.com/t01db644af1ec2f2297.png" alt=""><br>这个技术可以被用于当你在一个已知区域内(比如bss段)有一个指针,并且在这个区域内可以调用unlink的时候.<br>最常见的情况就是存在一个可以溢出的带有全局指针的缓冲区.<br>这个练习的关键在于利用free()来改写全局指针chunk0_ptr以达到任意地址写入的目的.<br>我们在chunk0这个全局变量里面伪造一个fake chunk.<br>先设置一个fd指针,使得chunk-&gt;fd-&gt;bk == chunk<br>再设置一个bk指针,使得chunk-&gt;bk-&gt;fd == chunk<br>chunk0_ptr[2]为fake chunk的fd, chunk0_ptr[3]为fake chunk的bk.<br>fake chunk -&gt; fd -&gt; bk = &amp;chunk0_ptr - 0x18 + 0x8 * 3 = &amp;chunk.<br>这点是这样.<br>我们还需要确保,fake chunk的size字段和下一个堆块的presize字段(fd-&gt;presize)的值是一样的.<br>经过了这个设置,就可以过掉“(chunksize(P) != prev_size (next_chunk(P)) == False”的校验了.<br>我们假设我们在chunk0处有一个溢出,让我们去修改chunk1的头部的信息.<br>我们缩小chunk1的presize(表示的是chunk0的size),好让free认为chunk0是从我们伪造的堆块开始的.<br>这里比较关键的是已知的指针正确地指向fake chunk的开头,以及我们相应地缩小了chunk.<br>如果我们正常地free掉了chunk0的话,chunk1的presize应该是0x90,但是这里被我们修改为了0x80.<br>我们通过设置“previous_in_use”的值为False,将chunk0标记为了free(尽管它并没有被free)<br>现在我们free掉chunk1,好让consolidate backward去unlink我们的fake chunk,然后修改chunk_ptr.  </p>
+<h2 id="修改的步骤"><a href="#修改的步骤" class="headerlink" title="修改的步骤."></a>修改的步骤.</h2><p>1.修改fd, bk<br>2.修改prev_size<br>3.修改prev_in_use</p>
+<h2 id="利用"><a href="#利用" class="headerlink" title="利用."></a>利用.</h2><p>free掉chunk1后, chunk1和fake chunk会合并, 调用unlink, 这时候fake chunk -&gt; fd -&gt; bk = fake chunk -&gt; fd<br>即chunk0_ptr = &amp;chunk0_ptr - 0x18<br>则chunk0_ptr[3] = addr, chunk0_ptr[3] = chunk0_ptr + 3* 0x8 = &amp;chunk0_ptr,  修改chunk0_ptr的值就可以修改addr内存的值.  </p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/堆/" rel="tag"># 堆</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2020/01/23/Silver-bullet/" rel="next" title="Silver-bullet">
+                  <i class="fa fa-chevron-left"></i> Silver-bullet
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2020/01/30/pwnable-tw-applestore/" rel="prev" title="pwnable.tw applestore">
+                  pwnable.tw applestore <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#glibc堆内存分配原理"><span class="nav-number">1.</span> <span class="nav-text">glibc堆内存分配原理.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Use-After-Free"><span class="nav-number">2.</span> <span class="nav-text">Use After Free</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Double-Free-漏洞"><span class="nav-number">3.</span> <span class="nav-text">Double Free 漏洞</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Unlink漏洞"><span class="nav-number">4.</span> <span class="nav-text">Unlink漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#修改的步骤"><span class="nav-number">4.1.</span> <span class="nav-text">修改的步骤.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#利用"><span class="nav-number">4.2.</span> <span class="nav-text">利用.</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://i.loli.net/2019/10/03/67Hi83ZnSBGKkRf.jpg"
+      alt="Cooook">
+  <p class="site-author-name" itemprop="name">Cooook</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2022</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cooook</span>
+</div>
+  <div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_pv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
